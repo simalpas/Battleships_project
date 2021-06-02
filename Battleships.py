@@ -1,6 +1,7 @@
 # import only system from os
 from os import system, name
 import time
+import random
 
 class Battleships:
     '''
@@ -20,8 +21,8 @@ class Battleships:
                         'Cruiser' : 'C', \
                         'Submarine': 'S', \
                         'Destroyer' : 'D', \
-                        'Hit' : 'x', \
-                        'Miss' : 'o' \
+                        'Hit' : 'X', \
+                        'Miss' : 'O' \
         }
 
         # initialise grids 10x10
@@ -69,7 +70,8 @@ class Battleships:
         Post: True if ship can be placed without overlap or extending beyond the grid
          else False.
         '''
-        if (xCoord+self.ships[shipName] > 10) or (yCoord+self.ships[shipName] > 10):
+        if (xCoord+self.ships[shipName] > 10 and direction == 0)\
+            or (yCoord+self.ships[shipName] > 10 and direction == 1):
             return False
         for i in range(self.ships[shipName]):
             if grid[yCoord][xCoord] != ' ':
@@ -95,34 +97,37 @@ class Battleships:
             return True
         return False
 
-    def setBoard(self, player):
+    def setBoard(self, board, auto=False):
         ''' Prompts to setup board for human players
         @param player: player number 1/2
         '''
-        if player == 1:
-            board = self.player1Primary
-        elif player == 2:
-            board = self.player2Primary
-        for eachShip in self.ships:
-            placed = False
-            while not placed:
-                self.printGrid(board)
-                print('Place your '+eachShip)
-                #TODO exception handling.
-                xCoord = int(input('X-coordinate for '+eachShip+' (0-9): '))
-                yCoord = int(input('y-coordinate for '+eachShip+' (0-9): '))
-                direction = input('To the right, or  down? (r/d)')
-                if direction == 'r':
-                    direction = 0
-                elif direction == 'd':
-                    direction = 1
-                placed = self.placeShip(board, xCoord, yCoord, direction, eachShip)
-                if not placed:
-                    print("Sorry, you can't place it there")
-                    time.sleep(2)
-                self.clear()
-                
-
+        if not auto:
+            for eachShip in self.ships:
+                placed = False
+                while not placed:
+                    self.printGrid(board)
+                    print('Place your '+eachShip)
+                    #TODO exception handling.
+                    xCoord = int(input('X-coordinate (0-9): '))
+                    yCoord = int(input('y-coordinate (0-9): '))
+                    direction = input('To the right, or  down? (r/d): ')
+                    if direction == 'r':
+                        direction = 0
+                    elif direction == 'd':
+                        direction = 1
+                    placed = self.placeShip(board, xCoord, yCoord, direction, eachShip)
+                    if not placed:
+                        print("Sorry, you can't place it there")
+                        time.sleep(2)
+                    self.clear()
+        else:
+            for eachShip in self.ships:
+                placed = False
+                while not placed:
+                    x = random.randrange(10)
+                    y = random.randrange(10)
+                    direction = random.randrange(2)
+                    placed = self.placeShip(board, x, y, direction, eachShip)
     
     def printGrid(self, grid):
         yLabels = range(10)
@@ -151,9 +156,12 @@ game = Battleships()
 
 #game.placeShip(game.player1Primary, 0, 0, 0, 'Aircraft Carrier')
 #game.placeShip(game.player1Primary, 6, 4, 1, 'Battleship')
-game.setBoard(1)
+#game.setBoard(game.player1Primary)
+game.setBoard(game.player2Primary, auto=True)
 
 
 
 
-game.printGrid(game.player1Primary)
+#game.printGrid(game.player1Primary)
+#print('-')
+game.printGrid(game.player2Primary)
