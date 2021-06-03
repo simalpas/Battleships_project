@@ -6,6 +6,7 @@ import random
 class Battleships:
     '''
     Class that plays the game of Battleships with varying degrees of intelligence
+    #TODO rewrite to use MVC patten with this class as the main.
     '''
     def __init__(self):
         # The ships : (length of ship, quantity)
@@ -26,20 +27,13 @@ class Battleships:
         }
 
         # initialise grids 10x10
-        self.player1Primary = self.__newBoard(10)
-        self.player1Tracking = self.__newBoard(10)
-        self.player2Primary = self.__newBoard(10)
-        self.player2Tracking = self.__newBoard(10)
-
-    def __newBoard(self, size):
-        '''Creates a 2 dimensional array filled with a blank spaces to be used as a board'''
-        board = []
-        for i in range(size):
-            row = []
-            for i in range(size):
-                row.append(' ')
-            board.append(row)
-        return board
+        self.player1Primary = GameBoard(10)
+        self.player1Tracking = GameBoard(10)
+        self.player2Primary = GameBoard(10)
+        self.player2Tracking = GameBoard(10)
+        # Set up the boards for human vs comp
+        self.__setBoard(self.player1Primary, auto=True)
+        self.__setBoard(self.player2Primary, auto=True)
 
     def __writeShip(self, grid, xCoord, yCoord, direction, shipName):
         '''
@@ -53,7 +47,7 @@ class Battleships:
         Post: ship is placed and grid is updated with ship symbol.
         '''
         for i in range(self.ships[shipName]):
-            grid[yCoord][xCoord] = self.symbols[shipName]
+            grid.getBoard()[yCoord][xCoord] = self.symbols[shipName]
             if direction == 0:
                 xCoord += 1
             elif direction == 1:
@@ -74,7 +68,7 @@ class Battleships:
             or (yCoord+self.ships[shipName] > 10 and direction == 1):
             return False
         for i in range(self.ships[shipName]):
-            if grid[yCoord][xCoord] != ' ':
+            if grid.getBoard()[yCoord][xCoord] != ' ':
                 return False
             if direction == 0:
                 xCoord += 1
@@ -82,7 +76,7 @@ class Battleships:
                 yCoord += 1
         return True
 
-    def placeShip(self, grid, xCoord, yCoord, direction, shipName):
+    def __placeShip(self, grid, xCoord, yCoord, direction, shipName):
         '''
         @param grid: a grid object.
         @param xCoord: the x coordinate indexed from 0.
@@ -97,7 +91,7 @@ class Battleships:
             return True
         return False
 
-    def setBoard(self, board, auto=False):
+    def __setBoard(self, board, auto=False):
         ''' Prompts to setup board for human players
         @param player: player number 1/2
         '''
@@ -105,7 +99,7 @@ class Battleships:
             for eachShip in self.ships:
                 placed = False
                 while not placed:
-                    self.printGrid(board)
+                    print(board)
                     print('Place your '+eachShip)
                     #TODO exception handling.
                     xCoord = int(input('X-coordinate (0-9): '))
@@ -115,7 +109,7 @@ class Battleships:
                         direction = 0
                     elif direction == 'd':
                         direction = 1
-                    placed = self.placeShip(board, xCoord, yCoord, direction, eachShip)
+                    placed = self.__placeShip(board, xCoord, yCoord, direction, eachShip)
                     if not placed:
                         print("Sorry, you can't place it there")
                         time.sleep(2)
@@ -127,19 +121,30 @@ class Battleships:
                     x = random.randrange(10)
                     y = random.randrange(10)
                     direction = random.randrange(2)
-                    placed = self.placeShip(board, x, y, direction, eachShip)
+                    placed = self.__placeShip(board, x, y, direction, eachShip)
     
+    def getPlayer1Primary():
+        return self.player1Primary
+    
+    def getPlayer1Tracking():
+        return self.player1Tracking
+
+    def getPlayer2Primary():
+        return self.player2Primary
+    
+    def getPlayer2Tracking():
+        return self.player2Tracking
+
     def printGrid(self, grid):
         yLabels = range(10)
         yCount = 0
         print('    0   1   2   3   4   5   6   7   8   9')
-        for i in grid:
+        for i in grid.getBoard():
             print(yLabels[yCount], end='')
             for j in i:
                 print(' | '+j, end='')
             print(' |')
             yCount += 1
-        print('-----------------------')
     
     def clear(self):
     # for windows
@@ -149,6 +154,41 @@ class Battleships:
             else:
                 _ = system('clear')
 
+class GameBoard:
+    '''
+    Class that represents the game boards
+    '''
+    def __init__(self, size):
+        self.board = self.__newBoard(size)
+    
+    def getBoard(self):
+        return self.board
+
+    def __newBoard(self, size):
+        '''Creates a 2 dimensional array filled with a blank spaces to be used as a board'''
+        board = []
+        for i in range(size):
+            row = []
+            for i in range(size):
+                row.append(' ')
+            board.append(row)
+        return board
+    
+        def __str__(self):
+            yLabels = range(10)
+            yCount = 0
+            print('    0   1   2   3   4   5   6   7   8   9')
+            for i in self.board:
+                print(yLabels[yCount], end='')
+                for j in i:
+                    print(' | '+j, end='')
+                print(' |')
+                yCount += 1
+
+class ComputerPlayer:
+    def __init__(self):
+        pass
+
 game = Battleships()
 
 
@@ -157,11 +197,12 @@ game = Battleships()
 #game.placeShip(game.player1Primary, 0, 0, 0, 'Aircraft Carrier')
 #game.placeShip(game.player1Primary, 6, 4, 1, 'Battleship')
 #game.setBoard(game.player1Primary)
-game.setBoard(game.player2Primary, auto=True)
+#game.setBoard(game.player2Primary, auto=True)
 
 
 
 
 #game.printGrid(game.player1Primary)
 #print('-')
+game.printGrid(game.player1Primary)
 game.printGrid(game.player2Primary)
