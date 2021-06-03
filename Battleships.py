@@ -25,27 +25,23 @@ class Battleships:
                     'Destroyer' : 'D', \
                     'Hit' : 'X', \
                     'Miss' : 'O', \
-                    'Empty' : ' ' \
+                    'Empty' : ' ',
+                    'Sunk' : '#' \
     }
     def __init__(self):
         # Setup new players
         self.player1 = Player(comp=False, test=True)
         self.player2 = Player(comp=True)
 
-    def takeShot(self, shooter, target, x, y):
+    def takeShot(self, target, x, y):
         result = target.incoming(x, y)
+        return result
 
-    def getPlayer1Primary(self):
-        return self.player1.getBoard()
-    
-    def getPlayer1Tracking(self):
-        return self.player1.getTracking()
+    def getPlayer1(self):
+        return self.player1
 
-    def getPlayer2Primary(self):
-        return self.player2.getBoard()
-    
-    def getPlayer2Tracking(self):
-        return self.player2.getTracking()
+    def getPlayer2(self):
+        return self.player2
 
     def getShips():
         return Battleships.ships
@@ -100,22 +96,27 @@ class GameBoard:
         return string
 
 class Player:
-
     def __init__(self, comp=False, test=False):
         self.boardPrimary = GameBoard(10)
         self.boardTracking = GameBoard(10)
+        # What remains of the fleet
+        self.fleetSize = {\
+            'A' : 5, \
+            'B' : 4, \
+            'C' : 3, \
+            'S' : 3, \
+            'D' : 2 }
+        # Location of the ships in the fleet
+        self.fleetLocation = { 'Aircraft Carrier': [(),()], \
+            'Battleship': [(),()], \
+            'Cruiser': [(),()], \
+            'Submarine': [(),()], \
+            'Destroyer': [(),()] }
         if comp:
             self.__computerPlayer()
         else:
             self.__humanPlayer(test)
-        # What remains of the fleet
-        self.fleet = {'A' : 5, \
-                      'B' : 4, \
-                      'C' : 3, \
-                      'S' : 3, \
-                      'D' : 2 \
-                    }
-    
+
     def getBoard(self):
         return self.boardPrimary
 
@@ -123,20 +124,27 @@ class Player:
         return self.boardTracking
 
     def incoming(self, x, y):
-        squareContents = self.boardPrimary.getSquare()
-        shipName = [key for key, value in Battleships.getShips() if value == squareContents]
+        squareContents = self.boardPrimary.getSquare(x, y)
+        shipName = [key for key, value in Battleships.getSymbols().items() if value == squareContents]
         # does not make clear what has been hit until ship has been destroyed
         if squareContents == ' ':
-            return 'miss'
-        elif squareContents != ' ' and \
-             self.fleet[squareContents] == 1:
-             return shipName + ' destroyed'
+            return 'MISS'
+        elif squareContents != ' ' and self.fleetSize[squareContents] == 1:
+             self.fleetSize[squareContents] -= 1
+             self.boardPrimary.setSquare(Battleships.getSymbols()['Sunk'], x, y)
+             return 'SUNK'
+        elif squareContents != ' ':
+            self.fleetSize[squareContents] -= 1
+            self.boardPrimary.setSquare(Battleships.getSymbols()['Hit'], x, y)
+            return 'HIT'
+
+    def __sinkShip(self, shipName):
+        # determine vert/horiz
+
+        # iterate over length of ship replacing symbol with sunk
+        pass
 
     def __humanPlayer(self, test=False):
-        '''if test:
-            self.__setBoard(self.boardPrimary, test=True)
-        else:
-            self.__setBoard(self.boardPrimary)'''
         self.__setBoard(self.boardPrimary, test=test)
 
     def __computerPlayer(self):
@@ -153,12 +161,14 @@ class Player:
         the grid. ShipName type has not been placed before.
         Post: ship is placed and grid is updated with ship symbol.
         '''
+        self.fleetLocation[shipName][0] = (xCoord, yCoord)
         for i in range(Battleships.getShips()[shipName]):
             grid.getBoard()[yCoord][xCoord] = Battleships.getSymbols()[shipName]
             if direction == 0:
                 xCoord += 1
             elif direction == 1:
                 yCoord += 1
+        self.fleetLocation[shipName][1] = (xCoord, yCoord)
 
     def __checkPlacement(self, grid, xCoord, yCoord, direction, shipName):
         '''
@@ -241,7 +251,11 @@ class Player:
 
 game = Battleships()
 
-print('player1\n', game.getPlayer1Primary())
+print('player1\n', game.getPlayer1().getBoard())
 #print('player2\n', game.getPlayer2Primary())
 
+print(game.takeShot(game.getPlayer1(), 0, 4))
+print(game.takeShot(game.getPlayer1(), 1, 4))
 
+print('player1\n', game.getPlayer1().getBoard())
+print(game.getPlayer1().fleetLocation)
