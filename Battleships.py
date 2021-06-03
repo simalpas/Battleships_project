@@ -6,35 +6,142 @@ import random
 class Battleships:
     '''
     Class that plays the game of Battleships with varying degrees of intelligence
-    #TODO rewrite to use MVC patten with this class as the main.
+    Singleton class
+    #TODO in the process of converting to MVC
     '''
+    #class vars
+    # The ships : length of ship
+    ships = { 'Aircraft Carrier' : 5, \
+                'Battleship' : 4, \
+                'Cruiser' : 3, \
+                'Submarine' : 3, \
+                'Destroyer' : 2 \
+    }
+    # ship symbol translation
+    symbols = {'Aircraft Carrier' : 'A', \
+                    'Battleship' : 'B', \
+                    'Cruiser' : 'C', \
+                    'Submarine': 'S', \
+                    'Destroyer' : 'D', \
+                    'Hit' : 'X', \
+                    'Miss' : 'O', \
+                    'Empty' : ' ' \
+    }
     def __init__(self):
-        # The ships : (length of ship, quantity)
-        self.ships = { 'Aircraft Carrier' : 5, \
-                    'Battleship' : 4, \
-                    'Cruiser' : 3, \
-                    'Submarine' : 3, \
-                    'Destroyer' : 2 \
-        }
-        # ship symbol translation
-        self.symbols = {'Aircraft Carrier' : 'A', \
-                        'Battleship' : 'B', \
-                        'Cruiser' : 'C', \
-                        'Submarine': 'S', \
-                        'Destroyer' : 'D', \
-                        'Hit' : 'X', \
-                        'Miss' : 'O' \
-        }
+        # Setup new players
+        self.player1 = Player(comp=False, test=True)
+        self.player2 = Player(comp=True)
 
-        # initialise grids 10x10
-        self.player1Primary = GameBoard(10)
-        self.player1Tracking = GameBoard(10)
-        self.player2Primary = GameBoard(10)
-        self.player2Tracking = GameBoard(10)
-        # Set up the boards for human vs comp
-        self.__setBoard(self.player1Primary, auto=True)
-        self.__setBoard(self.player2Primary, auto=True)
+    def takeShot(self, shooter, target, x, y):
+        result = target.incoming(x, y)
 
+    def getPlayer1Primary(self):
+        return self.player1.getBoard()
+    
+    def getPlayer1Tracking(self):
+        return self.player1.getTracking()
+
+    def getPlayer2Primary(self):
+        return self.player2.getBoard()
+    
+    def getPlayer2Tracking(self):
+        return self.player2.getTracking()
+
+    def getShips():
+        return Battleships.ships
+    
+    def getSymbols():
+        return Battleships.symbols
+    
+    def clear():
+    # for windows
+            if name == 'nt':
+                _ = system('cls')
+        # for mac and linux(here, os.name is 'posix')
+            else:
+                _ = system('clear')
+
+class GameBoard:
+    '''
+    Class that represents the game boards
+    '''
+    def __init__(self, size):
+        self.board = self.__newBoard(size)
+    
+    def getBoard(self):
+        return self.board
+    
+    def getSquare(self, x, y):
+        return self.board[y][x]
+
+    def setSquare(self, symbol, x, y):
+        self.board[y][x] = symbol
+
+    def __newBoard(self, size):
+        '''Creates a 2 dimensional array filled with a blank spaces to be used as a board'''
+        board = []
+        for i in range(size):
+            row = []
+            for i in range(size):
+                row.append(' ')
+            board.append(row)
+        return board
+    
+    def __str__(self):
+        yLabels = range(10)
+        yCount = 0
+        string = '    0   1   2   3   4   5   6   7   8   9\n'
+        for i in self.board:
+            string += str(yLabels[yCount])
+            for j in i:
+                string += ' | ' + j
+            string += ' |\n'
+            yCount += 1
+        return string
+
+class Player:
+
+    def __init__(self, comp=False, test=False):
+        self.boardPrimary = GameBoard(10)
+        self.boardTracking = GameBoard(10)
+        if comp:
+            self.__computerPlayer()
+        else:
+            self.__humanPlayer(test)
+        # What remains of the fleet
+        self.fleet = {'A' : 5, \
+                      'B' : 4, \
+                      'C' : 3, \
+                      'S' : 3, \
+                      'D' : 2 \
+                    }
+    
+    def getBoard(self):
+        return self.boardPrimary
+
+    def getTracking(self):
+        return self.boardTracking
+
+    def incoming(self, x, y):
+        squareContents = self.boardPrimary.getSquare()
+        shipName = [key for key, value in Battleships.getShips() if value == squareContents]
+        # does not make clear what has been hit until ship has been destroyed
+        if squareContents == ' ':
+            return 'miss'
+        elif squareContents != ' ' and \
+             self.fleet[squareContents] == 1:
+             return shipName + ' destroyed'
+
+    def __humanPlayer(self, test=False):
+        '''if test:
+            self.__setBoard(self.boardPrimary, test=True)
+        else:
+            self.__setBoard(self.boardPrimary)'''
+        self.__setBoard(self.boardPrimary, test=test)
+
+    def __computerPlayer(self):
+        self.__setBoard(self.boardPrimary, auto=True)
+    
     def __writeShip(self, grid, xCoord, yCoord, direction, shipName):
         '''
         @param grid: a grid object.
@@ -46,8 +153,8 @@ class Battleships:
         the grid. ShipName type has not been placed before.
         Post: ship is placed and grid is updated with ship symbol.
         '''
-        for i in range(self.ships[shipName]):
-            grid.getBoard()[yCoord][xCoord] = self.symbols[shipName]
+        for i in range(Battleships.getShips()[shipName]):
+            grid.getBoard()[yCoord][xCoord] = Battleships.getSymbols()[shipName]
             if direction == 0:
                 xCoord += 1
             elif direction == 1:
@@ -64,10 +171,10 @@ class Battleships:
         Post: True if ship can be placed without overlap or extending beyond the grid
          else False.
         '''
-        if (xCoord+self.ships[shipName] > 10 and direction == 0)\
-            or (yCoord+self.ships[shipName] > 10 and direction == 1):
+        if (xCoord+Battleships.getShips()[shipName] > 10 and direction == 0)\
+            or (yCoord+Battleships.getShips()[shipName] > 10 and direction == 1):
             return False
-        for i in range(self.ships[shipName]):
+        for i in range(Battleships.getShips()[shipName]):
             if grid.getBoard()[yCoord][xCoord] != ' ':
                 return False
             if direction == 0:
@@ -91,31 +198,39 @@ class Battleships:
             return True
         return False
 
-    def __setBoard(self, board, auto=False):
+    def __setBoard(self, board, auto=False, test=False):
         ''' Prompts to setup board for human players
         @param player: player number 1/2
         '''
         if not auto:
-            for eachShip in self.ships:
-                placed = False
-                while not placed:
-                    print(board)
-                    print('Place your '+eachShip)
-                    #TODO exception handling.
-                    xCoord = int(input('X-coordinate (0-9): '))
-                    yCoord = int(input('y-coordinate (0-9): '))
-                    direction = input('To the right, or  down? (r/d): ')
-                    if direction == 'r':
-                        direction = 0
-                    elif direction == 'd':
-                        direction = 1
-                    placed = self.__placeShip(board, xCoord, yCoord, direction, eachShip)
-                    if not placed:
-                        print("Sorry, you can't place it there")
-                        time.sleep(2)
-                    self.clear()
-        else:
-            for eachShip in self.ships:
+            if test:
+                for eachShip in Battleships.getShips():
+                    x, y, direction = 0, 0, 0
+                    placed = False
+                    while not placed:
+                        placed = self.__placeShip(board, x, y, direction, eachShip)
+                        y += 1
+            else:
+                for eachShip in Battleships.getShips():
+                    placed = False
+                    while not placed:
+                        print(board)
+                        print('Place your '+eachShip)
+                        #TODO exception handling.
+                        xCoord = int(input('X-coordinate (0-9): '))
+                        yCoord = int(input('y-coordinate (0-9): '))
+                        direction = input('To the right, or  down? (r/d): ')
+                        if direction == 'r':
+                            direction = 0
+                        elif direction == 'd':
+                            direction = 1
+                        placed = self.__placeShip(board, xCoord, yCoord, direction, eachShip)
+                        if not placed:
+                            print("Sorry, you can't place it there")
+                            time.sleep(2)
+                        #Battleships.clear()
+        elif auto:
+            for eachShip in Battleships.getShips():
                 placed = False
                 while not placed:
                     x = random.randrange(10)
@@ -123,86 +238,10 @@ class Battleships:
                     direction = random.randrange(2)
                     placed = self.__placeShip(board, x, y, direction, eachShip)
     
-    def getPlayer1Primary():
-        return self.player1Primary
-    
-    def getPlayer1Tracking():
-        return self.player1Tracking
-
-    def getPlayer2Primary():
-        return self.player2Primary
-    
-    def getPlayer2Tracking():
-        return self.player2Tracking
-
-    def printGrid(self, grid):
-        yLabels = range(10)
-        yCount = 0
-        print('    0   1   2   3   4   5   6   7   8   9')
-        for i in grid.getBoard():
-            print(yLabels[yCount], end='')
-            for j in i:
-                print(' | '+j, end='')
-            print(' |')
-            yCount += 1
-    
-    def clear(self):
-    # for windows
-            if name == 'nt':
-                _ = system('cls')
-        # for mac and linux(here, os.name is 'posix')
-            else:
-                _ = system('clear')
-
-class GameBoard:
-    '''
-    Class that represents the game boards
-    '''
-    def __init__(self, size):
-        self.board = self.__newBoard(size)
-    
-    def getBoard(self):
-        return self.board
-
-    def __newBoard(self, size):
-        '''Creates a 2 dimensional array filled with a blank spaces to be used as a board'''
-        board = []
-        for i in range(size):
-            row = []
-            for i in range(size):
-                row.append(' ')
-            board.append(row)
-        return board
-    
-        def __str__(self):
-            yLabels = range(10)
-            yCount = 0
-            print('    0   1   2   3   4   5   6   7   8   9')
-            for i in self.board:
-                print(yLabels[yCount], end='')
-                for j in i:
-                    print(' | '+j, end='')
-                print(' |')
-                yCount += 1
-
-class ComputerPlayer:
-    def __init__(self):
-        pass
 
 game = Battleships()
 
-
-#print(game.player1Primary)
-
-#game.placeShip(game.player1Primary, 0, 0, 0, 'Aircraft Carrier')
-#game.placeShip(game.player1Primary, 6, 4, 1, 'Battleship')
-#game.setBoard(game.player1Primary)
-#game.setBoard(game.player2Primary, auto=True)
+print('player1\n', game.getPlayer1Primary())
+#print('player2\n', game.getPlayer2Primary())
 
 
-
-
-#game.printGrid(game.player1Primary)
-#print('-')
-game.printGrid(game.player1Primary)
-game.printGrid(game.player2Primary)
