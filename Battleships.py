@@ -6,8 +6,8 @@ import random
 class Battleships:
     '''
     Class that plays the game of Battleships with varying degrees of intelligence
+    Built to be used as an API
     Singleton class
-    #TODO in the process of converting to MVC
     '''
     #class vars
     # The ships : length of ship
@@ -28,13 +28,14 @@ class Battleships:
                     'Empty' : ' ',
                     'Sunk' : '#' \
     }
-    def __init__(self):
+    def __init__(self, p1auto=False, p2auto=True, test=False):
         # Setup new players
-        self.player1 = Player(comp=False, test=True)
-        self.player2 = Player(comp=True)
+        self.player1 = Player(auto=p1auto, test=test)
+        self.player2 = Player(auto=p2auto)
 
-    def takeShot(self, target, x, y):
+    def takeShot(self, activePlayer, target, x, y):
         result = target.incoming(x, y)
+        activePlayer.recordShot(result, x, y)
         return result
 
     def getPlayer1(self):
@@ -96,7 +97,7 @@ class GameBoard:
         return string
 
 class Player:
-    def __init__(self, comp=False, test=False):
+    def __init__(self, auto=False, test=False):
         self.boardPrimary = GameBoard(10)
         self.boardTracking = GameBoard(10)
         # What remains of the fleet
@@ -107,15 +108,17 @@ class Player:
             'S' : 3, \
             'D' : 2 }
         # Location of the ships in the fleet
-        self.fleetLocation = { 'Aircraft Carrier': [(),()], \
-            'Battleship': [(),()], \
-            'Cruiser': [(),()], \
-            'Submarine': [(),()], \
-            'Destroyer': [(),()] }
-        if comp:
-            self.__computerPlayer()
-        else:
-            self.__humanPlayer(test)
+        self.fleetLocation = { 'Aircraft Carrier': [], \
+            'Battleship': [], \
+            'Cruiser': [], \
+            'Submarine': [], \
+            'Destroyer': [] }
+        self.enemyfleetLocation = { 'Aircraft Carrier': [], \
+            'Battleship': [], \
+            'Cruiser': [], \
+            'Submarine': [], \
+            'Destroyer': [] }
+        self.__setBoard(self.boardPrimary, auto=auto, test=test)
 
     def getBoard(self):
         return self.boardPrimary
@@ -125,62 +128,49 @@ class Player:
 
     def incoming(self, x, y):
         squareContents = self.boardPrimary.getSquare(x, y)
-        shipName = [key for key, value in Battleships.getSymbols().items() if value == squareContents]
+        # reverse lookup of symbol to shipname from dictionary
+        shipName = next(key for key, value in Battleships.symbols.items() if value == squareContents)
         # does not make clear what has been hit until ship has been destroyed
         if squareContents == ' ':
-            return 'MISS'
+            return 'Miss', (x, y)
         elif squareContents != ' ' and self.fleetSize[squareContents] == 1:
              self.fleetSize[squareContents] -= 1
              self.boardPrimary.setSquare(Battleships.getSymbols()['Sunk'], x, y)
-             return 'SUNK'
+             self.__sinkShip(self.fleetLocation[shipName], self.boardPrimary)
+             return shipName, self.fleetLocation[shipName]
         elif squareContents != ' ':
             self.fleetSize[squareContents] -= 1
             self.boardPrimary.setSquare(Battleships.getSymbols()['Hit'], x, y)
-            return 'HIT'
+            return 'Hit', (x, y)
 
-    def __sinkShip(self, shipName):
-        # determine vert/horiz
+    def recordShot(self, result, x, y):
+        if result[0] in Battleships.getShips():
+            self.__sinkShip(result[1], self.boardTracking)
+        else:
+            self.boardTracking.setSquare(Battleships.symbols[result[0]], x, y)
 
-        # iterate over length of ship replacing symbol with sunk
-        pass
+    def __sinkShip(self, locations, board):
+        # iterate over length of ship replacing hit symbol with sunk symbol
+        for i in locations:
+            board.setSquare(Battleships.getSymbols()['Sunk'], i[0], i[1])
 
     def __humanPlayer(self, test=False):
-        self.__setBoard(self.boardPrimary, test=test)
+        pass
 
     def __computerPlayer(self):
-        self.__setBoard(self.boardPrimary, auto=True)
+        pass
     
     def __writeShip(self, grid, xCoord, yCoord, direction, shipName):
-        '''
-        @param grid: a grid object.
-        @param xCoord: the x coordinate indexed from 0.
-        @param yCoord: the y coordinate indexed from 0.
-        @param direction: 0=horizontal 1=vertical.
-        @shipName: a name in the dictionary ships.
-        Pre: ship can fit where placed without overlapping or extending out of 
-        the grid. ShipName type has not been placed before.
-        Post: ship is placed and grid is updated with ship symbol.
-        '''
-        self.fleetLocation[shipName][0] = (xCoord, yCoord)
         for i in range(Battleships.getShips()[shipName]):
             grid.getBoard()[yCoord][xCoord] = Battleships.getSymbols()[shipName]
+            #record ship coords.
+            self.fleetLocation[shipName].append((xCoord, yCoord))
             if direction == 0:
                 xCoord += 1
             elif direction == 1:
                 yCoord += 1
-        self.fleetLocation[shipName][1] = (xCoord, yCoord)
 
     def __checkPlacement(self, grid, xCoord, yCoord, direction, shipName):
-        '''
-        @param grid: a grid object.
-        @param xCoord: the x coordinate indexed from 0.
-        @param yCoord: the y coordinate indexed from 0.
-        @param direction: 0=horizontal 1=vertical.
-        @shipName: a name in the dictionary ships.
-        Pre: ShipName type has not been placed before.
-        Post: True if ship can be placed without overlap or extending beyond the grid
-         else False.
-        '''
         if (xCoord+Battleships.getShips()[shipName] > 10 and direction == 0)\
             or (yCoord+Battleships.getShips()[shipName] > 10 and direction == 1):
             return False
@@ -194,15 +184,6 @@ class Player:
         return True
 
     def __placeShip(self, grid, xCoord, yCoord, direction, shipName):
-        '''
-        @param grid: a grid object.
-        @param xCoord: the x coordinate indexed from 0.
-        @param yCoord: the y coordinate indexed from 0.
-        @param direction: 0=horizontal 1=vertical.
-        @shipName: a name in the dictionary ships.
-        Pre: Ship of type shipName has not been previously placed.
-        Post: writes ship to grid if possible and returns True, False otherwise
-        '''
         if self.__checkPlacement(grid, xCoord, yCoord, direction, shipName):
             self.__writeShip(grid, xCoord, yCoord, direction, shipName)
             return True
@@ -249,13 +230,16 @@ class Player:
                     placed = self.__placeShip(board, x, y, direction, eachShip)
     
 
-game = Battleships()
+game = Battleships(p1auto=False, p2auto=True, test=True)
 
-print('player1\n', game.getPlayer1().getBoard())
+#print('player1\n', game.getPlayer1().getBoard())
 #print('player2\n', game.getPlayer2Primary())
 
-print(game.takeShot(game.getPlayer1(), 0, 4))
-print(game.takeShot(game.getPlayer1(), 1, 4))
+print(game.takeShot(game.getPlayer2(), game.getPlayer1(), 0, 3))
+#print('Player 1\n', game.getPlayer1().getBoard())
+print(game.takeShot(game.getPlayer2(), game.getPlayer1(), 1, 3))
+print(game.takeShot(game.getPlayer2(), game.getPlayer1(), 2, 3))
+print(game.takeShot(game.getPlayer2(), game.getPlayer1(), 4, 6))
 
-print('player1\n', game.getPlayer1().getBoard())
-print(game.getPlayer1().fleetLocation)
+print('Player 2 Tracking\n', game.getPlayer2().getTracking())
+
