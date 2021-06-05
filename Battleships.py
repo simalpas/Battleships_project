@@ -33,15 +33,20 @@ class Battleships:
         self.player1 = Player(auto=p1auto, test=test)
         self.player2 = Player(auto=p2auto)
 
-    def takeShot(self, activePlayer, target, x, y):
-        result = target.incoming(x, y)
-        activePlayer.recordShot(result, x, y)
+    def takeShot(self, activePlayer, target):
+        result = activePlayer.takeShot(target)
         return result
 
-    def getPlayer1(self):
+    def getPlayerBoard(self, player, tracking=False):
+        if not tracking:
+            return player.getBoard()
+        else:
+            return player.getTracking()
+
+    def getP1(self):
         return self.player1
 
-    def getPlayer2(self):
+    def getP2(self):
         return self.player2
 
     def getShips():
@@ -119,6 +124,9 @@ class Player:
             'Submarine': [], \
             'Destroyer': [] }
         self.__setBoard(self.boardPrimary, auto=auto, test=test)
+        self.autoPlayer = auto
+        if auto:
+            self.aIPlayer = aI()
 
     def getBoard(self):
         return self.boardPrimary
@@ -143,7 +151,19 @@ class Player:
             self.boardPrimary.setSquare(Battleships.getSymbols()['Hit'], x, y)
             return 'Hit', (x, y)
 
-    def recordShot(self, result, x, y):
+    def takeShot(self, target):
+        if self.autoPlayer:
+            x, y = self.aIPlayer.takeShot()
+            result = target.incoming(x, y)
+            self.__recordShot(result, x, y)
+        else:
+            x = int(input('X-coordinate for your shot (0-9): '))
+            y = int(input('y-coordinate for your shot (0-9): '))
+            result = target.incoming(x, y)
+            self.__recordShot(result, x, y)
+        return result, x, y
+
+    def __recordShot(self, result, x, y):
         if result[0] in Battleships.getShips():
             self.__sinkShip(result[1], self.boardTracking)
         else:
@@ -154,12 +174,6 @@ class Player:
         for i in locations:
             board.setSquare(Battleships.getSymbols()['Sunk'], i[0], i[1])
 
-    def __humanPlayer(self, test=False):
-        pass
-
-    def __computerPlayer(self):
-        pass
-    
     def __writeShip(self, grid, xCoord, yCoord, direction, shipName):
         for i in range(Battleships.getShips()[shipName]):
             grid.getBoard()[yCoord][xCoord] = Battleships.getSymbols()[shipName]
@@ -229,17 +243,29 @@ class Player:
                     direction = random.randrange(2)
                     placed = self.__placeShip(board, x, y, direction, eachShip)
     
+class aI:
+    def __init__(self, level=0):
+        self.possibleShots = []
+        self.__initialisePossibleShots()
+    
+    def takeShot(self):
+        random.shuffle(self.possibleShots)
+        return self.possibleShots.pop()
+
+    def __initialisePossibleShots(self):
+        for i in range(10):
+            for j in range(10):
+                self.possibleShots.append((i,j))
+
+
 
 game = Battleships(p1auto=False, p2auto=True, test=True)
 
-#print('player1\n', game.getPlayer1().getBoard())
-#print('player2\n', game.getPlayer2Primary())
 
-print(game.takeShot(game.getPlayer2(), game.getPlayer1(), 0, 3))
-#print('Player 1\n', game.getPlayer1().getBoard())
-print(game.takeShot(game.getPlayer2(), game.getPlayer1(), 1, 3))
-print(game.takeShot(game.getPlayer2(), game.getPlayer1(), 2, 3))
-print(game.takeShot(game.getPlayer2(), game.getPlayer1(), 4, 6))
+#print(game.takeShot(game.getP2(), game.getP1(), 0, 3))
+#print(game.takeShot(game.getP2(), game.getP1(), 1, 3))
+#print(game.takeShot(game.getP2(), game.getP1(), 2, 3))
+#print(game.takeShot(game.getP2(), game.getP1(), 4, 6))
+game.takeShot(game.getP2(), game.getP1())
 
-print('Player 2 Tracking\n', game.getPlayer2().getTracking())
-
+print('Player 1 Tracking\n', game.getPlayerBoard(game.getP2(), tracking=True))
