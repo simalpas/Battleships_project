@@ -7,7 +7,7 @@ while not game.winner():
     print('Taken a shot at ',game.takeShot(game.getP2(), game.getP1()))
     #print('Computer player tracking: \n', game.getP2().aIPlayer.shiptracking)
     #print('Computer player possible shots remaining: ', len(game.getP2().aIPlayer.possibleShots))
-    print('Player 1 Primary\n', game.getPlayerBoard(game.getP1(), tracking=False))
+    #print('Player 1 Primary\n', game.getPlayerBoard(game.getP1(), tracking=False))
     print('END OF TURN')
 
 
