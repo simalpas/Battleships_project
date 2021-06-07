@@ -23,16 +23,16 @@ class Battleships:
                     'Cruiser' : 'C', \
                     'Submarine': 'S', \
                     'Destroyer' : 'D', \
-                    'Hit' : 'X', \
-                    'Miss' : 'O', \
+                    'Hit' : '\033[1;31;40mX\033[1;37;40m', \
+                    'Miss' : '\033[1;34;40mo\033[1;37;40m', \
                     'Empty' : ' ',
-                    'Sunk' : '#' \
+                    'Sunk' : '\033[1;31;40m#\033[1;37;40m' \
     }
     displayDelay = 2
-    def __init__(self, p1auto=False, p2auto=True, test=False, aiLevelP1=0, aiLevelP2=0):
+    def __init__(self, p1auto=False, p2auto=True, test=False, aiLevelP1=0, aiLevelP2=0, randomise=False):
         # Setup new players
-        self.player1 = Player(auto=p1auto, test=test, aiLevel=aiLevelP1)
-        self.player2 = Player(auto=p2auto, test=test, aiLevel=aiLevelP2)
+        self.player1 = Player(auto=p1auto, test=test, aiLevel=aiLevelP1, randomise=randomise)
+        self.player2 = Player(auto=p2auto, test=test, aiLevel=aiLevelP2, randomise=randomise)
 
     def takeShot(self, activePlayer, target):
         result = activePlayer.takeShot(target)
@@ -102,18 +102,18 @@ class GameBoard:
     
     def __str__(self):
         yLabel = 9
-        string = '   _______________________________________\n'
+        string = '\033[1;30;40m   _______________________________________\n'
         for i in range(len(self.board)-1, -1, -1):
-            string += str(yLabel)
+            string += '\033[1;30;40m'+str(yLabel)+'\033[1;37    ;40m'
             for j in self.board[i]:
-                string += ' | ' + j
-            string += ' |\n'
+                string += '\033[1;30;40m | \033[1;37;40m' + j
+            string += '\033[1;30;40m |\n\033[1;37;40m'
             yLabel -= 1
-        string += '    0   1   2   3   4   5   6   7   8   9'
+        string += '\033[1;30;40m    0   1   2   3   4   5   6   7   8   9\033[1;37;40m'
         return string
 
 class Player:
-    def __init__(self, auto=False, test=False, aiLevel=0):
+    def __init__(self, auto=False, test=False, aiLevel=0, randomise=False):
         # TODO remove gameboards for computer players
         self.boardPrimary = GameBoard(10)
         self.boardTracking = GameBoard(10)
@@ -133,7 +133,7 @@ class Player:
             'Destroyer': [] }
         self.shotsTaken = []
         self.movesMade = 0
-        self.__setBoard(self.boardPrimary, auto=auto, test=test)
+        self.__setBoard(self.boardPrimary, auto=auto, test=test, randomise=randomise)
         self.autoPlayer = auto
         if auto:
             self.aIPlayer = aI(aiLevel=aiLevel)
@@ -223,7 +223,7 @@ class Player:
             return True
         return False
 
-    def __setBoard(self, board, auto=False, test=False):
+    def __setBoard(self, board, auto=False, test=False, randomise=False):
         ''' Prompts to setup board for human players
         @param player: player number 1/2
         '''
@@ -238,6 +238,8 @@ class Player:
                     while not placed:
                         placed = self.__placeShip(board, x, y, direction, eachShip)
                         y += 1
+            elif randomise:
+                self.__randomPlacement(board)
             else:
                 # goes through the defined ships, asks for intended location
                 # checks if valid loaction, and places if so.
@@ -251,14 +253,17 @@ class Player:
                         if not placed:
                             print("Sorry, you can't place it there")
                             time.sleep(Battleships.displayDelay)
-        elif auto:
-            for eachShip in Battleships.getShips():
-                placed = False
-                while not placed:
-                    x = random.randrange(10)
-                    y = random.randrange(10)
-                    direction = random.randrange(2)
-                    placed = self.__placeShip(board, x, y, direction, eachShip)
+        elif auto or randomise:
+            self.__randomPlacement(board)
+
+    def __randomPlacement(self, board):
+        for eachShip in Battleships.getShips():
+            placed = False
+            while not placed:
+                x = random.randrange(10)
+                y = random.randrange(10)
+                direction = random.randrange(2)
+                placed = self.__placeShip(board, x, y, direction, eachShip)
 
     def __getCoords(self, placing=False):
         failed = True
@@ -342,6 +347,7 @@ class aI:
         return self.testingShots.pop()
 
     def __shipTrackingAlgorithm(self):
+        # TODO logical deduction of ship location from all previous shots including misses
         # if no hits, return False
         #print('length of unsunk list', len(self.shiptracking['unsunk']))
         if len(self.shiptracking['unsunk']) == 0:
@@ -363,7 +369,7 @@ class aI:
         if len(self.shiptracking['unsunk']) >=2:
             # determine if x or y direction
             knownHits = self.shiptracking['unsunk']
-            if knownHits[-1][0] == knownHits[-2][0]:
+            if knownHits[len(knownHits)-1][0] == knownHits[len(knownHits)-2][0]:
                 direction = 1
             else:
                 direction = 0
