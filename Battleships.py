@@ -28,6 +28,7 @@ class Battleships:
                     'Empty' : ' ',
                     'Sunk' : '#' \
     }
+    displayDelay = 2
     def __init__(self, p1auto=False, p2auto=True, test=False, aiLevelP1=0, aiLevelP2=0):
         # Setup new players
         self.player1 = Player(auto=p1auto, test=test, aiLevel=aiLevelP1)
@@ -36,13 +37,22 @@ class Battleships:
     def takeShot(self, activePlayer, target):
         result = activePlayer.takeShot(target)
         activePlayer.movesMade += 1
+        checkForWin = self.winner()
+        if checkForWin:
+            return checkForWin
         return result
 
-    def getPlayerBoard(self, player, tracking=False):
+    def getPlayer1Board(self, tracking=False):
         if not tracking:
-            return player.getBoard()
+            return self.player1.getBoard()
         else:
-            return player.getTracking()
+            return self.player1.getTracking()
+
+    def getPlayer2Board(self, tracking=False):
+        if not tracking:
+            return self.player2.getBoard()
+        else:
+            return self.player2.getTracking()
 
     def getP1(self):
         return self.player1
@@ -63,15 +73,7 @@ class Battleships:
     
     def getSymbols():
         return Battleships.symbols
-    
-    def clear():
-    # for windows
-            if name == 'nt':
-                _ = system('cls')
-        # for mac and linux(here, os.name is 'posix')
-            else:
-                _ = system('clear')
-
+        
 class GameBoard:
     '''
     Class that represents the game boards
@@ -99,15 +101,15 @@ class GameBoard:
         return board
     
     def __str__(self):
-        yLabels = range(10)
-        yCount = 0
-        string = '   0   1   2   3   4   5   6   7   8   9\n'
-        for i in self.board:
-            string += str(yLabels[yCount])
-            for j in i:
+        yLabel = 9
+        string = '   _______________________________________\n'
+        for i in range(len(self.board)-1, -1, -1):
+            string += str(yLabel)
+            for j in self.board[i]:
                 string += ' | ' + j
             string += ' |\n'
-            yCount += 1
+            yLabel -= 1
+        string += '    0   1   2   3   4   5   6   7   8   9'
         return string
 
 class Player:
@@ -129,6 +131,7 @@ class Player:
             'Cruiser': [], \
             'Submarine': [], \
             'Destroyer': [] }
+        self.shotsTaken = []
         self.movesMade = 0
         self.__setBoard(self.boardPrimary, auto=auto, test=test)
         self.autoPlayer = auto
@@ -166,8 +169,14 @@ class Player:
             result = target.incoming(x, y)
             self.__recordShot(result, x, y)
         else:
-            x = int(input('X-coordinate for your shot (0-9): '))
-            y = int(input('y-coordinate for your shot (0-9): '))
+            invalid = True
+            while invalid:
+                x, y = self.__getCoords()
+                if (x,y) in self.shotsTaken:
+                    print("You've already shot there, try again")
+                else:
+                    invalid = False
+            self.shotsTaken.append((x,y))
             result = target.incoming(x, y)
             self.__recordShot(result, x, y)
         return result
@@ -218,8 +227,11 @@ class Player:
         ''' Prompts to setup board for human players
         @param player: player number 1/2
         '''
+        # TODO refactor to place each ship individualy with
+        # separate calls to a new function
         if not auto:
             if test:
+                # places ships in the bottom left corner for shot testing.
                 for eachShip in Battleships.getShips():
                     x, y, direction = 0, 0, 0
                     placed = False
@@ -227,24 +239,18 @@ class Player:
                         placed = self.__placeShip(board, x, y, direction, eachShip)
                         y += 1
             else:
+                # goes through the defined ships, asks for intended location
+                # checks if valid loaction, and places if so.
                 for eachShip in Battleships.getShips():
                     placed = False
                     while not placed:
                         print(board)
                         print('Place your '+eachShip)
-                        #TODO exception handling.
-                        xCoord = int(input('X-coordinate (0-9): '))
-                        yCoord = int(input('y-coordinate (0-9): '))
-                        direction = input('To the right, or  down? (r/d): ')
-                        if direction == 'r':
-                            direction = 0
-                        elif direction == 'd':
-                            direction = 1
+                        xCoord, yCoord, direction = self.__getCoords(placing=True)
                         placed = self.__placeShip(board, xCoord, yCoord, direction, eachShip)
                         if not placed:
                             print("Sorry, you can't place it there")
-                            time.sleep(2)
-                        #Battleships.clear()
+                            time.sleep(Battleships.displayDelay)
         elif auto:
             for eachShip in Battleships.getShips():
                 placed = False
@@ -253,7 +259,33 @@ class Player:
                     y = random.randrange(10)
                     direction = random.randrange(2)
                     placed = self.__placeShip(board, x, y, direction, eachShip)
-    
+
+    def __getCoords(self, placing=False):
+        failed = True
+        while failed:
+            try:
+                xCoord = int(input('X-coordinate (0-9): '))
+                if xCoord < 0 or xCoord > 9:
+                    raise ValueError
+                yCoord = int(input('y-coordinate (0-9): '))
+                if yCoord < 0 or yCoord > 9:
+                    raise ValueError
+                direction = False #default for reuse
+                if placing:
+                    direction = input('To the right, or up? (r/u): ')
+                    if not(direction == 'r' or direction == 'u'):
+                        raise ValueError
+                    elif direction == 'r':
+                        direction = 0
+                    elif direction == 'u':
+                        direction = 1
+                failed = False
+            except ValueError:
+                print('Sorry, your input was not recognised, please try again')
+        if direction == False:
+            return xCoord, yCoord
+        return xCoord, yCoord, direction
+
 class aI:
     def __init__(self, aiLevel=0):
         self.aiLevel = aiLevel
@@ -303,9 +335,6 @@ class aI:
             potentialShot = self.__randomShots()
         return potentialShot
 
-    def __systematic(self):
-        pass
-
     def __systematicWithShipTracking(self):
         pass
 
@@ -314,7 +343,7 @@ class aI:
 
     def __shipTrackingAlgorithm(self):
         # if no hits, return False
-        print('length of unsunk list', len(self.shiptracking['unsunk']))
+        #print('length of unsunk list', len(self.shiptracking['unsunk']))
         if len(self.shiptracking['unsunk']) == 0:
             return False
         # go through the unsunk locations, if only one: generate possible shots, check if 
@@ -322,11 +351,11 @@ class aI:
         # and return one of them.
         if len(self.shiptracking['unsunk']) == 1:
             knownHit = self.shiptracking['unsunk'][0]
-            print('knownHit: ', knownHit)
+            #print('knownHit: ', knownHit)
             bestGuesses = self.__generatePotentialShots(knownHit)
-            print('bestGuesses: ',bestGuesses)
+            #print('bestGuesses: ',bestGuesses)
             readyToFire = random.choice(bestGuesses)
-            print('Ready to fire at: ', readyToFire)
+            #print('Ready to fire at: ', readyToFire)
             return readyToFire
         # if there are two or more check if they are adjacent and record if in x or y direction
         # generate possible shots, check if legal, remove those that are not, randomly choose
@@ -340,29 +369,29 @@ class aI:
                 direction = 0
             # TODO deal with edge cases where unsunk ships length is same as max unsunk
             # and location on board means it cannot continue in that direction.
-            print('direction found: ', direction)
+            #print('direction found: ', direction)
             # generate possible shots for all coordinates along that axis. Previously taken
             # shots will be automatically removed. Not an efficient way of doing this!
             # However as board is a max of 100 squares, processing power not a premium.
             # TODO refactor to only generate for the extremes of unsunk ships
             bestGuesses = []
             for eachHit in knownHits:
-                print('Generating for: ', eachHit)
+                #print('Generating for: ', eachHit)
                 for eachGuess in self.__generatePotentialShots(eachHit, direction=direction):
                     bestGuesses.append(eachGuess)
             # if possible shots are empty choose one of the hits in unsunk and assume single hit
-            print('bestGuesses generated: ', bestGuesses)
+            #print('bestGuesses generated: ', bestGuesses)
             bestGuesses = self.__sanitiseList(bestGuesses)
-            print('sanitised: ', bestGuesses)
+            #print('sanitised: ', bestGuesses)
             if len(bestGuesses) == 0:
                 while len(bestGuesses) == 0:
-                    print('looking for something to shoot at')
+                    # print('looking for something to shoot at')
                     bestGuesses = self.__generatePotentialShots(random.choice(knownHits))
                 readyToFire = random.choice(bestGuesses)
-                print("found this though ", bestGuesses)
+                #print("found this though ", bestGuesses)
             else:
                 readyToFire = random.choice(bestGuesses)
-            print('readyToFire: ', readyToFire)
+            #print('readyToFire: ', readyToFire)
             return readyToFire
 
     def __generatePotentialShots(self, knownHit, direction='all'):
@@ -379,7 +408,7 @@ class aI:
         if direction == 1 or direction == 'all':
             for j in [y-1, y+1]:
                     potentialShots.append((x, j))
-        print('generated tuples: ',potentialShots)
+        #print('generated tuples: ',potentialShots)
         potentialShots = self.__sanitiseList(potentialShots)
         return potentialShots
 
@@ -388,7 +417,7 @@ class aI:
         for eachTuple in guesses:
             if eachTuple in self.possibleShots:
                 potentialShots.append(eachTuple)
-        print('reduced list: ', potentialShots)
+        #print('reduced list: ', potentialShots)
         return potentialShots
 
     def __maxShipLength(self):
