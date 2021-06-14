@@ -23,12 +23,22 @@ class Battleships:
                     'Cruiser' : 'C', \
                     'Submarine': 'S', \
                     'Destroyer' : 'D', \
-                    'Hit' : '\033[1;31;40mX\033[1;37;40m', \
-                    'Miss' : '\033[1;34;40mo\033[1;37;40m', \
+                    'Hit' : 'X', \
+                    'Miss' : 'o', \
                     'Empty' : ' ',
-                    'Sunk' : '\033[1;31;40m#\033[1;37;40m' \
-    }
+                    'Sunk' : '#' \
+                    }
+    # colours and their escape sequences
+    ansiColours = {\
+        'red': '\033[31m', \
+        'blue': '\033[34m', \
+        'green': '\033[32m', \
+        'darkRed': '\033[31;1m', \
+        'reset': '\033[0m' \
+        }
+    # adjust any display delay
     displayDelay = 2
+
     def __init__(self, p1auto=False, p2auto=True, test=False, aiLevelP1=0, aiLevelP2=0, randomise=False):
         # Setup new players
         self.player1 = Player(auto=p1auto, test=test, aiLevel=aiLevelP1, randomise=randomise)
@@ -37,9 +47,6 @@ class Battleships:
     def takeShot(self, activePlayer, target):
         result = activePlayer.takeShot(target)
         activePlayer.movesMade += 1
-        checkForWin = self.winner()
-        if checkForWin:
-            return checkForWin
         return result
 
     def getPlayer1Board(self, tracking=False):
@@ -100,16 +107,40 @@ class GameBoard:
             board.append(row)
         return board
     
+    def __colourShip(self, string):
+        return Battleships.ansiColours['green']+string+Battleships.ansiColours['reset']
+    
+    def __colourMiss(self, string):
+        return Battleships.ansiColours['blue']+string+Battleships.ansiColours['reset']
+
+    def __colourHit(self, string):
+        return Battleships.ansiColours['red']+string+Battleships.ansiColours['reset']
+
+    def __colourSunk(self, string):
+        return Battleships.ansiColours['darkRed']+string+Battleships.ansiColours['reset']
+
     def __str__(self):
         yLabel = 9
-        string = '\033[1;30;40m   _______________________________________\n'
+        string = '   _______________________________________\n'
         for i in range(len(self.board)-1, -1, -1):
-            string += '\033[1;30;40m'+str(yLabel)+'\033[1;37    ;40m'
+            string += str(yLabel)
             for j in self.board[i]:
-                string += '\033[1;30;40m | \033[1;37;40m' + j
-            string += '\033[1;30;40m |\n\033[1;37;40m'
+                if j == Battleships.getSymbols()['Aircraft Carrier'] or \
+                j == Battleships.getSymbols()['Battleship'] or \
+                j == Battleships.getSymbols()['Cruiser'] or \
+                j == Battleships.getSymbols()['Submarine'] or \
+                j == Battleships.getSymbols()['Destroyer']:
+                    j = self.__colourShip(j)
+                elif  j == Battleships.getSymbols()['Miss']:
+                    j = self.__colourMiss(j)
+                elif j == Battleships.getSymbols()['Hit']:
+                    j = self.__colourHit(j)
+                elif j == Battleships.getSymbols()['Sunk']:
+                    j = self.__colourSunk(j)
+                string += ' | ' + j
+            string += ' |\n'
             yLabel -= 1
-        string += '\033[1;30;40m    0   1   2   3   4   5   6   7   8   9\033[1;37;40m'
+        string += '    0   1   2   3   4   5   6   7   8   9'
         return string
 
 class Player:
@@ -150,6 +181,7 @@ class Player:
         shipName = next(key for key, value in Battleships.symbols.items() if value == squareContents)
         # does not make clear what has been hit until ship has been destroyed
         if squareContents == ' ':
+            #colour symbol
             self.boardPrimary.setSquare(Battleships.getSymbols()['Miss'], x, y)
             return 'Miss', (x, y)
         elif squareContents != ' ' and self.fleetSize[squareContents] == 1:
