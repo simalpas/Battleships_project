@@ -15,7 +15,7 @@ humanVcomp = True
 # TODO check for win after each turn
 while humanVcomp:
     clear()
-    game = Battleships(p1auto=False, p2auto=True, randomise=False, aiLevelP2=1)
+    game = Battleships(p1auto=False, p2auto=True, randomise=True, aiLevelP2=1)
     playerFirst = 0
     while not game.winner():
         clear()
@@ -30,7 +30,7 @@ while humanVcomp:
         print(game.getPlayer1Board(tracking=True))
         print('')
         # uncomment below to cheat
-        #print('CHEATING COMPUTER BOARD\n', game.getPlayer2Board(), '\n')
+        print('CHEATING COMPUTER BOARD\n', game.getPlayer2Board(), '\n')
         game.takeShot(game.getP1(), game.getP2())
         playerFirst = 1
     humanVcomp=False

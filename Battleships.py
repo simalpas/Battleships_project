@@ -320,7 +320,7 @@ class Player:
             except ValueError:
                 print('Sorry, your input was not recognised, please try again')
         if direction == False:
-            return xCoord, yCoord
+            return xCoord, yCoord, direction
         return xCoord, yCoord, direction
 
 class aI:
