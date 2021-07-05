@@ -1,11 +1,11 @@
-WORK ON Battleships_python for the project. The Java version is a work in progress and pull requests will not be approved.
-
-Python project to write a cli vesion of the classic game battleships. Uses classes. Plan is to also publish as an API, and freeze for linux and windows.
+Python project to write a cli vesion of the classic game battleships. Uses classes. Plan is to also publish as an API.
 Features:
 human player input to place ships (checks for valid ship placements)
 auto populate boards for computer players
 human readable boards
 separate boards to record moves taken
+
+To work on this, fork it and set up your own branch to work on a particular issue. If you want to work on something, add your name to the TODO and then start working on it. Try and aim for a pull request within 24hrs. If you think what you are working on will take longer than that, consider reducing the problem size or refactoring into smaller code chunks.
 
 This is the list of things that I think will end up with a reasonable working version of battleships. Please add to this list if you think of things that will be useful to the project. At the moment, I think it best to avoid new features until we have a working version with a front end that allows a user to play a single player game against a computer.
 
