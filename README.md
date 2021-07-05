@@ -5,7 +5,13 @@ auto populate boards for computer players
 human readable boards
 separate boards to record moves taken
 
-To work on this, fork it and set up your own branch to work on a particular issue. If you want to work on something, add your name to the TODO and then start working on it. Try and aim for a pull request within 24hrs. If you think what you are working on will take longer than that, consider reducing the problem size or refactoring into smaller code chunks.
+To work on this, fork it and set up your own branch to work on a particular issue. 
+for example:
+git checkout -b <yourBranchName>
+
+If you want to work on something, add your name to the TODO and then start working on it. Try and aim for a pull request within 24hrs. If you think what you are working on will take longer than that, consider reducing the problem size or refactoring into smaller code chunks.
+
+Once you are happy with your changes, and have commited to your branch, push your changes to your github.From your github account you can initiate a pull request for your code to be reviewed.
 
 This is the list of things that I think will end up with a reasonable working version of battleships. Please add to this list if you think of things that will be useful to the project. At the moment, I think it best to avoid new features until we have a working version with a front end that allows a user to play a single player game against a computer.
 
