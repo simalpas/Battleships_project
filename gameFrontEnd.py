@@ -12,6 +12,8 @@ def clear():
 
 compVcomp = False
 humanVcomp = True
+i=0
+
 # TODO check for win after each turn
 while humanVcomp:
     clear()
