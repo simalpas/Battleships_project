@@ -6,7 +6,9 @@ human readable boards
 separate boards to record moves taken
 
 To work on this, fork it and set up your own branch to work on a particular issue. 
+
 for example:
+
 git checkout -b yourBranchName
 
 If you want to work on something, add your name to the TODO and then start working on it. Try and aim for a pull request within 24hrs. If you think what you are working on will take longer than that, consider reducing the problem size or refactoring into smaller code chunks.
