@@ -22,3 +22,4 @@ This is the list of things that I think will end up with a reasonable working ve
 - [ ] Write a new front end to play the game, possibly using django or some other python based framework?
 - [ ] Host poject on cloud server (to be done on simalpas.com/battleships)
 - [ ] Write unit tests for public methods
+- [ ] Work out the colors, using references from the relevent class.
