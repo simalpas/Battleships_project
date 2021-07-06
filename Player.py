@@ -1,6 +1,8 @@
 from Ai import Ai
 from Gameboard import GameBoard
 from References import References
+import time
+import random
 
 class Player:
     def __init__(self, auto=False, test=False, aiLevel=0, randomise=False):
@@ -118,6 +120,7 @@ class Player:
         '''
         # TODO refactor to place each ship individualy with
         # separate calls to a new function
+        #TODO move functions to print the board into front end.
         if not auto:
             if test:
                 # places ships in the bottom left corner for shot testing.
