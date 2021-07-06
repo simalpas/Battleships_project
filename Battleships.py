@@ -1,13 +1,8 @@
-# import only system from os
-from os import system, name
-import time
-import random
 from Player import Player
 
 class Battleships:
     '''
     Class that plays the game of Battleships with varying degrees of intelligence
-    Built to be used as an API
     Singleton class
     '''
 
@@ -50,7 +45,3 @@ class Battleships:
             return 'Player 2 wins in '+str(self.getP2().movesMade)
         else:
             return False
-
-
-        
-

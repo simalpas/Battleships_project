@@ -18,6 +18,9 @@ class References:
                     'Empty' : ' ',
                     'Sunk' : '\033[1;31;40m#\033[1;37;40m' \
     }
+    # the delay used to display errors before clearing the screen
+    displayDelay =  2
+
     def getShips():
         return References.ships
     

@@ -1,6 +1,8 @@
 class GameBoard:
     '''
     Class that represents the game boards
+    Does this by storing symbols in a 2 dimensional array.
+    Has a toString method for basic visual representation of the board
     '''
     def __init__(self, size):
         self.board = self.__newBoard(size)
@@ -26,14 +28,14 @@ class GameBoard:
     
     def __str__(self):
         yLabel = 9
-        string = '\033[1;30;40m   _______________________________________\n'
+        string = '   _______________________________________\n'
         for i in range(len(self.board)-1, -1, -1):
-            string += '\033[1;30;40m'+str(yLabel)+'\033[1;37    ;40m'
+            string += str(yLabel)
             for j in self.board[i]:
-                string += '\033[1;30;40m | \033[1;37;40m' + j
-            string += '\033[1;30;40m |\n\033[1;37;40m'
+                string += ' | ' + j
+            string += ' |\n'
             yLabel -= 1
-        string += '\033[1;30;40m    0   1   2   3   4   5   6   7   8   9\033[1;37;40m'
+        string += '    0   1   2   3   4   5   6   7   8   9'
         return string
 
 
