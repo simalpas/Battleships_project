@@ -13,10 +13,10 @@ class References:
                     'Cruiser' : 'C', \
                     'Submarine': 'S', \
                     'Destroyer' : 'D', \
-                    'Hit' : '\033[1;31;40mX\033[1;37;40m', \
-                    'Miss' : '\033[1;34;40mo\033[1;37;40m', \
+                    'Hit' : 'X', \
+                    'Miss' : 'o', \
                     'Empty' : ' ',
-                    'Sunk' : '\033[1;31;40m#\033[1;37;40m' \
+                    'Sunk' : '#' \
     }
     # the delay used to display errors before clearing the screen
     displayDelay =  2

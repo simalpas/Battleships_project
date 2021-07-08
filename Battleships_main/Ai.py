@@ -1,4 +1,7 @@
-class Ai:
+from References import References
+import random
+
+class Ai():
     def __init__(self, aiLevel=0):
         self.aiLevel = aiLevel
         self.possibleShots = []
@@ -27,7 +30,7 @@ class Ai:
         # records in the hit list (shiptracking) when a ship has been sunk or just hit
         if result[0] == 'Hit':
             self.shiptracking['unsunk'].append((x, y))
-        if result[0] in Battleships.getShips():
+        if result[0] in References.getShips():
             self.shiptracking['unsunk'].append((x, y))
             # removes the locations of unknown hits when informed of a sinking 
             # and updates tracking with sunken ship allowing length tracking.

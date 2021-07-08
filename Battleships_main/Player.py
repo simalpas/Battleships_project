@@ -1,5 +1,5 @@
 from Ai import Ai
-from Gameboard import GameBoard
+from GameBoard import GameBoard
 from References import References
 import time
 import random
@@ -26,6 +26,7 @@ class Player:
         self.shotsTaken = []
         self.movesMade = 0
         self.__setBoard(self.boardPrimary, auto=auto, test=test, randomise=randomise)
+        self.autoPlayer = auto
         if auto:
             self.aIPlayer = Ai(aiLevel=aiLevel)
 

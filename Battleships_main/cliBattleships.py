@@ -10,8 +10,8 @@ def clear():
         _ = system('clear')
     print("Battleships - Shoot to win!")
 
-compVcomp = False
-humanVcomp = True
+compVcomp = True
+humanVcomp = False
 i=0
 
 # TODO check for win after each turn
