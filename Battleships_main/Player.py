@@ -1,5 +1,5 @@
+from Battleships_main import GameBoard
 from Ai import Ai
-from GameBoard import GameBoard
 from References import References
 import time
 import random

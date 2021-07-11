@@ -25,6 +25,9 @@ class GameBoard:
                 row.append(' ')
             board.append(row)
         return board
+
+    def sumUp(self, a, b):
+        return a+b
     
     def __str__(self):
         yLabel = 9
