@@ -1,5 +1,5 @@
 import unittest
-from ..Battleships_main.Gameboard import GameBoard
+from . import GameBoard
 
 class TestGameBoard(unittest.TestCase):
     def setUp(self) -> None:

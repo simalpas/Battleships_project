@@ -1,4 +1,4 @@
-from References import References
+import References
 import random
 
 class Ai():

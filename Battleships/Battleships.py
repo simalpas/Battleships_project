@@ -12,6 +12,8 @@ class Battleships:
         self.player1 = Player(auto=p1auto, test=test, aiLevel=aiLevelP1, randomise=randomise)
         self.player2 = Player(auto=p2auto, test=test, aiLevel=aiLevelP2, randomise=randomise)
 
+    #TODO write documentation for the various return values
+    # and ensure that the returns are only chars
     def takeShot(self, activePlayer, target):
         result = activePlayer.takeShot(target)
         activePlayer.movesMade += 1
@@ -32,16 +34,22 @@ class Battleships:
         else:
             return self.player2.getTracking()
 
-    def getP1(self):
+    def __getP1(self):
         return self.player1
 
-    def getP2(self):
+    def __getP2(self):
         return self.player2
 
+    def getMovesMadeP1(self):
+        return self.__getP1().movesMade
+ 
+    def getMovesMadeP2(self):
+        return self.__getP2().movesMade       
+
     def winner(self):
-        if self.getP2().fleetSize['shipsRemaining'] == 0:
-            return 'Player 1 wins in '+str(self.getP1().movesMade)
-        elif self.getP1().fleetSize['shipsRemaining'] == 0:
-            return 'Player 2 wins in '+str(self.getP2().movesMade)
+        if self.__getP2().fleetSize['shipsRemaining'] == 0:
+            return 'Player 1 wins in '+str(self.__getP1().movesMade)
+        elif self.__getP1().fleetSize['shipsRemaining'] == 0:
+            return 'Player 2 wins in '+str(self.__getP2().movesMade)
         else:
             return False

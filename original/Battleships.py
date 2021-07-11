@@ -203,7 +203,7 @@ class Player:
         else:
             invalid = True
             while invalid:
-                x, y = self.__getCoords()
+                x, y, direction = self.__getCoords()
                 if (x,y) in self.shotsTaken:
                     print("You've already shot there, try again")
                 else:
