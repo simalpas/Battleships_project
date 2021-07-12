@@ -22,7 +22,7 @@ while humanVcomp:
     while not game.winner():
         clear()
         if playerFirst != 0:
-            result, location = game.takeShot(game.getP2(), game.getP1())
+            result, location = game.takeShot("P1", "P2")
             print('\nComputer fired at: \n{loc} \nand it was a {res}\n'.format(loc=location, res=result))
         else:
             print('\n\n\n\n')
@@ -43,8 +43,8 @@ while compVcomp:
     clear()
     game = Battleships(p1auto=True, p2auto=True, randomise=True, aiLevelP2=1, aiLevelP1=1)
     while not game.winner():
-        game.takeShot(game.getP1(), game.getP2())
-        game.takeShot(game.getP2(), game.getP1())
+        game.takeShot("P1", "P2")
+        game.takeShot("P1", "P2")
     print("Player 1 fleet")
     print(game.getPlayer1Board())
     print("\n\nPlayer 2 fleet")
