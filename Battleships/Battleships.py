@@ -13,8 +13,16 @@ class Battleships:
         self.player2 = Player(auto=p2auto, test=test, aiLevel=aiLevelP2, randomise=randomise)
 
     #TODO write documentation for the various return values
-    # and ensure that the returns are only chars
+    # and ensure that the returns are only chars, player object should not be passed as an argument
     def takeShot(self, activePlayer, target):
+        if activePlayer == "P1":
+            activePlayer = self.__getP1()
+        elif activePlayer == "P2":
+            activePlayer = self.__getP2()
+        if target == "P1":
+            target = self.__getP1()
+        elif target == "P2":
+            target = self.__getP2()
         result = activePlayer.takeShot(target)
         activePlayer.movesMade += 1
         checkForWin = self.winner()
