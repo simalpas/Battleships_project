@@ -12,7 +12,8 @@ class Battleships:
         self.player2 = Player(auto=p2auto, test=test, aiLevel=aiLevelP2, randomise=randomise)
 
     #TODO write documentation for the various return values
-    # 
+    # TODO should take coordinates as arguments, returning what was hit.
+    # curently runs an algorithm that gathers the inputs.
     # and ensure that the returns are only chars.
     def takeShot(self, activePlayer, target):
         if activePlayer == "P1":
