@@ -8,13 +8,23 @@ class GameBoard:
         self.board = self.__newBoard(size)
     
     def getBoard(self):
-        return self.board
-    
-    def getSquare(self, x, y):
-        return self.board[y][x]
+        return self.__copyBoard(self.board)
 
-    def setSquare(self, symbol, x, y):
+    def getSquare(self, x, y):
+        return str(self.board[y][x])
+
+    def setSquare(self, x, y, symbol):
         self.board[y][x] = symbol
+
+    def __copyBoard(self, board):
+        '''Creates a copy of the board element by element, to avoid further dependancies'''
+        copyBoard = []
+        for i in self.board:
+            row = []
+            for j in i:
+                row.append(j)
+            copyBoard.append(row)
+        return copyBoard
 
     def __newBoard(self, size):
         '''Creates a 2 dimensional array filled with a blank spaces to be used as a board'''

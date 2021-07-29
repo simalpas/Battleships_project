@@ -2,6 +2,11 @@ from Battleships import Battleships
 import References
 from os import system, name
 
+# TODO move algorithm to set ship locations into cli, and remove from player class
+# TODO change coord system in cli to use letters and then numbers
+# TODO move function to get shot coords from player into cli.
+
+
 ansiColours = {\
         'black' : '\033[30m', \
         'boldBlack' : '\033[30;1m', \
@@ -23,12 +28,12 @@ ansiColours = {\
         }
 resetColour = ansiColours['reset']
 boardColour = ansiColours['white']
-yLabelColour = ansiColours['white']
-xLabelColour = ansiColours['white']
+yLabelColour = ansiColours['boldWhite']
+xLabelColour = ansiColours['boldWhite']
 shipColour = ansiColours['boldGreen']
 missColour = ansiColours['blue']
-hitColour  = ansiColours['red']
-sunkColour = ansiColours['boldRed']
+hitColour  = ansiColours['boldRed']
+sunkColour = ansiColours['red']
 
 def printBoard(board):
     yLabel = 9
@@ -51,7 +56,9 @@ def printBoard(board):
     string += xLabelColour + '    0   1   2   3   4   5   6   7   8   9' + resetColour
     print(string)
 
-def printWinner( 
+def printWinner():
+    pass
+
 def clear():
     # for windows
     if name == 'nt':

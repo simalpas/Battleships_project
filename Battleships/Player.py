@@ -31,10 +31,13 @@ class Player:
             self.aIPlayer = Ai(aiLevel=aiLevel)
 
     def getBoard(self):
-        return self.boardPrimary
+        return self.boardPrimary.getBoard()
+
+    def movesMade(self):
+        return self.movesMade
 
     def getTracking(self):
-        return self.boardTracking
+        return self.boardTracking.getBoard()
 
     def incoming(self, x, y):
         squareContents = self.boardPrimary.getSquare(x, y)
@@ -42,17 +45,17 @@ class Player:
         shipName = next(key for key, value in References.symbols.items() if value == squareContents)
         # does not make clear what has been hit until ship has been destroyed
         if squareContents == ' ':
-            self.boardPrimary.setSquare(References.getSymbols()['Miss'], x, y)
+            self.boardPrimary.setSquare(x, y, References.getSymbols()['Miss'])
             return 'Miss', (x, y)
         elif squareContents != ' ' and self.fleetSize[squareContents] == 1:
              self.fleetSize[squareContents] -= 1
              self.fleetSize['shipsRemaining'] -= 1
-             self.boardPrimary.setSquare(References.getSymbols()['Sunk'], x, y)
+             self.boardPrimary.setSquare(x, y, References.getSymbols()['Sunk'])
              self.__sinkShip(self.fleetLocation[shipName], self.boardPrimary)
              return shipName, self.fleetLocation[shipName]
         elif squareContents != ' ':
             self.fleetSize[squareContents] -= 1
-            self.boardPrimary.setSquare(References.getSymbols()['Hit'], x, y)
+            self.boardPrimary.setSquare(x, y, References.getSymbols()['Hit'])
             return 'Hit', (x, y)
 
     def takeShot(self, target):
@@ -79,16 +82,17 @@ class Player:
         elif result[0] in References.getShips():
             self.__sinkShip(result[1], self.boardTracking)
         else:
-            self.boardTracking.setSquare(References.symbols[result[0]], x, y)
+            self.boardTracking.setSquare(x, y, References.symbols[result[0]])
 
     def __sinkShip(self, locations, board):
         # iterate over length of ship replacing hit symbol with sunk symbol
         for i in locations:
-            board.setSquare(References.getSymbols()['Sunk'], i[0], i[1])
+            board.setSquare(i[0], i[1], References.getSymbols()['Sunk'])
 
     def __writeShip(self, grid, xCoord, yCoord, direction, shipName):
+        # sends messages to board to set the locations of the fleet.
         for i in range(References.getShips()[shipName]):
-            grid.getBoard()[yCoord][xCoord] = References.getSymbols()[shipName]
+            grid.setSquare(xCoord, yCoord, References.getSymbols()[shipName])
             #record ship coords.
             self.fleetLocation[shipName].append((xCoord, yCoord))
             if direction == 0:
@@ -110,14 +114,18 @@ class Player:
         return True
 
     def __placeShip(self, grid, xCoord, yCoord, direction, shipName):
+        # broken, see self.__writeShip
         if self.__checkPlacement(grid, xCoord, yCoord, direction, shipName):
             self.__writeShip(grid, xCoord, yCoord, direction, shipName)
             return True
         return False
 
     def __setBoard(self, board, auto=False, test=False, randomise=False):
+        # Broken, see self.__writeShip
         ''' Prompts to setup board for human players
         @param player: player number 1/2
+        TODO should just accept a coord, and direction, then check for validity, then return either
+        true of false depending on sucessful placement.
         '''
         # TODO refactor to place each ship individualy with
         # separate calls to a new function

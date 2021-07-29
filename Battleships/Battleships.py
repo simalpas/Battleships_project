@@ -6,14 +6,14 @@ class Battleships:
     Singleton class
     '''
 
-    displayDelay = 2
     def __init__(self, p1auto=False, p2auto=True, test=False, aiLevelP1=0, aiLevelP2=0, randomise=False):
         # Setup new players
         self.player1 = Player(auto=p1auto, test=test, aiLevel=aiLevelP1, randomise=randomise)
         self.player2 = Player(auto=p2auto, test=test, aiLevel=aiLevelP2, randomise=randomise)
 
     #TODO write documentation for the various return values
-    # and ensure that the returns are only chars, player object should not be passed as an argument
+    # 
+    # and ensure that the returns are only chars.
     def takeShot(self, activePlayer, target):
         if activePlayer == "P1":
             activePlayer = self.__getP1()
@@ -54,10 +54,16 @@ class Battleships:
     def getMovesMadeP2(self):
         return self.__getP2().movesMade       
 
+    def movesMade(self, player):
+        if player == 'P1':
+            return str(self.__getP1().movesMade())
+        elif player == 'P2':
+            return str(self.__getP2().mavesMade())
+
     def winner(self):
         if self.__getP2().fleetSize['shipsRemaining'] == 0:
-            return 'Player 1 wins in '+str(self.__getP1().movesMade)
+            return 'P2'
         elif self.__getP1().fleetSize['shipsRemaining'] == 0:
-            return 'Player 2 wins in '+str(self.__getP2().movesMade)
+            return 'P1'
         else:
             return False

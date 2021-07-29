@@ -24,7 +24,7 @@ class Ai():
         elif self.aiLevel == 'testing':
             return self.__testingShots()
         else:
-            pass
+            return self.__randomWithShipTracking()
 
     def recordShot(self, result, x, y):
         # records in the hit list (shiptracking) when a ship has been sunk or just hit
@@ -149,3 +149,6 @@ class Ai():
         for i in range(10):
             for j in range(10):
                 self.possibleShots.append((i,j))
+
+#testInstance = Ai(aiLevel=1)
+#print(testInstance.possibleShots)
