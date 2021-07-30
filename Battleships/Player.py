@@ -62,20 +62,13 @@ class Player:
             return 'Hit', (x, y)
 
     def takeShot(self, target, xCoord=False, yCoord=False):
-        # TODO move code that elicits coords into cli
         if self.autoPlayer:
             x, y = self.aIPlayer.takeShot()
             result = target.incoming(x, y)
             self.__recordShot(result, x, y)
         else:
-            #invalid = True
-            #while invalid:
-#           #    x, y = self.__getCoords()
             if (xCoord,yCoord) in self.shotsTaken:
-                    #print("You've already shot there, try again")
                 return -1
-            #    else:
-            #        invalid = False
             self.shotsTaken.append((xCoord,yCoord))
             result = target.incoming(xCoord, yCoord)
             self.__recordShot(result, xCoord, yCoord)
@@ -171,7 +164,7 @@ class Player:
                 direction = random.randrange(2)
                 placed = self.__placeShip(board, x, y, direction, eachShip)
 
-    def __getCoords(self, placing=False):
+"""    def __getCoords(self, placing=False):
         failed = True
         while failed:
             try:
@@ -195,6 +188,6 @@ class Player:
                 print('Sorry, your input was not recognised, please try again')
         if placing == False:
             return xCoord, yCoord, direction
-        return xCoord, yCoord, direction
+        return xCoord, yCoord, direction"""
 
 

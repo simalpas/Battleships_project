@@ -41,8 +41,7 @@ def printBoard(board):
     for i in range(len(board)-1, -1, -1):
         string += yLabelColour+str(yLabel)+resetColour
         for j in board[i]:
-            string += boardColour+' | ' #+ shipColour + j + resetColour
-            # needs cases for different ships colours
+            string += boardColour+' | ' 
             if j == References.symbols['Hit']:
                 string += hitColour + j + resetColour
             elif j == References.symbols['Miss']:
@@ -56,8 +55,17 @@ def printBoard(board):
     string += xLabelColour + '    0   1   2   3   4   5   6   7   8   9' + resetColour
     print(string)
 
-def printWinner():
-    pass
+def printWinner(state):
+    clear()
+    if state == 'lose':
+        print('\nYou Lose\n\n')
+    elif state == 'win':
+        print('\nYou Win!\n\n')
+    print("Player 1 fleet")
+    printBoard(game.getPlayer1Board())
+    print("\nPlayer 1 tracking")
+    printBoard(game.getPlayer1Board(tracking=True))
+    print('')
 
 def takeShotAt(gameInstance, activePlayer, target):
     invalid = True
@@ -108,30 +116,38 @@ def clear():
         _ = system('clear')
     print("Battleships - Shoot to win!")
 
-compVcomp = True
-humanVcomp = False
+compVcomp = False
+humanVcomp = True
 i=0
-# TODO check for win after each turn
 while humanVcomp:
+# TODO check for win after each turn
     clear()
     game = Battleships(p1auto=False, p2auto=True, randomise=False, aiLevelP2=1, test=True)
     playerFirst = 0
     while not game.winner():
         clear()
         if playerFirst != 0:
-            result, location = takeShotAt(game, "P2", "P1", activeIsAi=True)
-            print('\nComputer fired at: \n{loc} \nand it was a {res}\n'.format(loc=location, res=result))
+            result, location = takeShotAt(game, "P2", "P1")
+            if result == 'P':
+                printWinner('lose')
+                break
+            print('\nComputer fired at: {loc} \nand it was a {res}\n'.format(loc=location, res=result))
         else:
-            print('\n\n\n\n')
+            print('\n\n\n')
         print("Player 1 fleet")
         printBoard(game.getPlayer1Board())
-        # print(game.getPlayer1Board(tracking=False))
         print("\nPlayer 1 tracking")
         printBoard(game.getPlayer1Board(tracking=True))
         print('')
-        # uncomment below to cheat
-        #print('CHEATING COMPUTER BOARD\n', game.getPlayer2Board(), '\n')
-        takeShotAt(game, 'P1', 'P2')
+        cheat = True
+        if cheat:
+            print('CHEATING COMPUTER BOARD')
+            printBoard(game.getPlayer2Board())
+            print()
+        result = takeShotAt(game, 'P1', 'P2')
+        if result == 'P1':
+            printWinner('win')
+            break
         playerFirst = 1
     humanVcomp=False
 
@@ -149,4 +165,4 @@ while compVcomp:
     printBoard(game.getPlayer2Board())
     compVcomp = False
 
-print(game.winner())
+#print(game.winner())
