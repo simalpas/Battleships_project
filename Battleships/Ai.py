@@ -5,6 +5,7 @@ class Ai():
     def __init__(self, aiLevel=0):
         self.aiLevel = aiLevel
         self.possibleShots = []
+        self.__initialisePossibleShots()
         self.shiptracking = {\
             'unsunk': [], \
             'Aircraft Carrier' : 0, \
@@ -12,7 +13,6 @@ class Ai():
             'Cruiser': 0, \
             'Submarine': 0, \
             'Destroyer': 0}
-        self.__initialisePossibleShots()
         self.testingShots = [(0,4), (1,4)]
     
     def takeShot(self):

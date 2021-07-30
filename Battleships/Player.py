@@ -30,6 +30,9 @@ class Player:
         if auto:
             self.aIPlayer = Ai(aiLevel=aiLevel)
 
+    def getAutoPlayer(self):
+        return self.autoPlayer
+
     def getBoard(self):
         return self.boardPrimary.getBoard()
 
@@ -58,22 +61,24 @@ class Player:
             self.boardPrimary.setSquare(x, y, References.getSymbols()['Hit'])
             return 'Hit', (x, y)
 
-    def takeShot(self, target):
+    def takeShot(self, target, xCoord=False, yCoord=False):
+        # TODO move code that elicits coords into cli
         if self.autoPlayer:
             x, y = self.aIPlayer.takeShot()
             result = target.incoming(x, y)
             self.__recordShot(result, x, y)
         else:
-            invalid = True
-            while invalid:
-                x, y = self.__getCoords()
-                if (x,y) in self.shotsTaken:
-                    print("You've already shot there, try again")
-                else:
-                    invalid = False
-            self.shotsTaken.append((x,y))
-            result = target.incoming(x, y)
-            self.__recordShot(result, x, y)
+            #invalid = True
+            #while invalid:
+#           #    x, y = self.__getCoords()
+            if (xCoord,yCoord) in self.shotsTaken:
+                    #print("You've already shot there, try again")
+                return -1
+            #    else:
+            #        invalid = False
+            self.shotsTaken.append((xCoord,yCoord))
+            result = target.incoming(xCoord, yCoord)
+            self.__recordShot(result, xCoord, yCoord)
         return result
 
     def __recordShot(self, result, x, y):

@@ -15,7 +15,10 @@ class Battleships:
     # TODO should take coordinates as arguments, returning what was hit.
     # curently runs an algorithm that gathers the inputs.
     # and ensure that the returns are only chars.
-    def takeShot(self, activePlayer, target):
+    # @param coords, int 0:size
+    # @param activePlayer/target : P1/P2
+    def takeShot(self, activePlayer, target, xCoord=False, yCoord=False):
+#        print(xCoord, yCoord)
         if activePlayer == "P1":
             activePlayer = self.__getP1()
         elif activePlayer == "P2":
@@ -24,7 +27,8 @@ class Battleships:
             target = self.__getP1()
         elif target == "P2":
             target = self.__getP2()
-        result = activePlayer.takeShot(target)
+        # TODO add code to handle Ai player, and process received coords
+        result = activePlayer.takeShot(target, xCoord, yCoord)
         activePlayer.movesMade += 1
         checkForWin = self.winner()
         if checkForWin:
@@ -42,6 +46,12 @@ class Battleships:
             return self.player2.getBoard()
         else:
             return self.player2.getTracking()
+
+    def getAutoPlayer(self, player):
+        if player == 'P1':
+            return self.__getP1().getAutoPlayer()
+        elif player == 'P2':
+            return self.__getP2().getAutoPlayer()
 
     def __getP1(self):
         return self.player1

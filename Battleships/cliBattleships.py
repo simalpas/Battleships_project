@@ -59,6 +59,46 @@ def printBoard(board):
 def printWinner():
     pass
 
+def takeShotAt(gameInstance, activePlayer, target):
+    invalid = True
+    if gameInstance.getAutoPlayer(activePlayer):
+        result = gameInstance.takeShot(activePlayer, target)
+        invalid = False
+    while invalid:
+        x, y, direction = getCoords()
+        result = gameInstance.takeShot(activePlayer, target, xCoord=x, yCoord=y)
+        if result == -1:
+            print("You've already shot there, try again")
+        else:
+            invalid = False
+    return result
+
+def getCoords(placing=False):
+    failed = True
+    while failed:
+        try:
+            xCoord = int(input('X-coordinate (0-9): '))
+            if xCoord < 0 or xCoord > 9:
+                raise ValueError
+            yCoord = int(input('y-coordinate (0-9): '))
+            if yCoord < 0 or yCoord > 9:
+                raise ValueError
+            direction = False #default for reuse
+            if placing:
+                direction = input('To the right, or up? (r/u): ')
+                if not(direction == 'r' or direction == 'u'):
+                    raise ValueError
+                elif direction == 'r':
+                    direction = 0
+                elif direction == 'u':
+                    direction = 1
+            failed = False
+        except ValueError:
+            print('Sorry, your input was not recognised, please try again')
+    if placing == False:
+        return xCoord, yCoord, direction
+    return xCoord, yCoord, direction
+
 def clear():
     # for windows
     if name == 'nt':
@@ -79,7 +119,7 @@ while humanVcomp:
     while not game.winner():
         clear()
         if playerFirst != 0:
-            result, location = game.takeShot("P2", "P1")
+            result, location = takeShotAt(game, "P2", "P1", activeIsAi=True)
             print('\nComputer fired at: \n{loc} \nand it was a {res}\n'.format(loc=location, res=result))
         else:
             print('\n\n\n\n')
@@ -91,7 +131,7 @@ while humanVcomp:
         print('')
         # uncomment below to cheat
         #print('CHEATING COMPUTER BOARD\n', game.getPlayer2Board(), '\n')
-        game.takeShot('P1', 'P2')
+        takeShotAt(game, 'P1', 'P2')
         playerFirst = 1
     humanVcomp=False
 
@@ -101,8 +141,8 @@ while compVcomp:
     clear()
     game = Battleships(p1auto=True, p2auto=True, randomise=True, aiLevelP2=1, aiLevelP1=1)
     while not game.winner():
-        game.takeShot("P1", "P2")
-        game.takeShot("P2", "P1")
+        takeShotAt(game, "P1", "P2")
+        takeShotAt(game, "P2", "P1")
     print("Player 1 fleet")
     printBoard(game.getPlayer1Board())
     print("\n\nPlayer 2 fleet")
