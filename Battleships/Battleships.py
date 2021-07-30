@@ -73,8 +73,8 @@ class Battleships:
 
     def winner(self):
         if self.__getP2().fleetSize['shipsRemaining'] == 0:
-            return 'P2'
-        elif self.__getP1().fleetSize['shipsRemaining'] == 0:
             return 'P1'
+        elif self.__getP1().fleetSize['shipsRemaining'] == 0:
+            return 'P2'
         else:
             return False
