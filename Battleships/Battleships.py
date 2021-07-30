@@ -18,7 +18,7 @@ class Battleships:
     # @param coords, int 0:size
     # @param activePlayer/target : P1/P2
     def takeShot(self, activePlayer, target, xCoord=False, yCoord=False):
-#        print(xCoord, yCoord)
+        #TODO error if no coords passed for human player
         if activePlayer == "P1":
             activePlayer = self.__getP1()
         elif activePlayer == "P2":

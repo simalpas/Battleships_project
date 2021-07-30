@@ -3,8 +3,8 @@ import References
 from os import system, name
 
 # TODO move algorithm to set ship locations into cli, and remove from player class
-# TODO change coord system in cli to use letters and then numbers
-# TODO move function to get shot coords from player into cli.
+# TODO (low) change coord system in cli to use letters and then numbers
+# DONE move function to get shot coords from player into cli.
 
 
 ansiColours = {\
@@ -27,7 +27,7 @@ ansiColours = {\
         'reset': '\033[0m' \
         }
 resetColour = ansiColours['reset']
-boardColour = ansiColours['white']
+boardColour = ansiColours['blue']
 yLabelColour = ansiColours['boldWhite']
 xLabelColour = ansiColours['boldWhite']
 shipColour = ansiColours['yellow']
@@ -116,11 +116,10 @@ def clear():
         _ = system('clear')
     print("Battleships - Shoot to win!")
 
-compVcomp = False
-humanVcomp = True
+compVcomp = True
+humanVcomp = False
 i=0
 while humanVcomp:
-# TODO check for win after each turn
     clear()
     game = Battleships(p1auto=False, p2auto=True, randomise=False, aiLevelP2=1, test=True)
     playerFirst = 0
@@ -139,7 +138,7 @@ while humanVcomp:
         print("\nPlayer 1 tracking")
         printBoard(game.getPlayer1Board(tracking=True))
         print('')
-        cheat = True
+        cheat = False
         if cheat:
             print('CHEATING COMPUTER BOARD')
             printBoard(game.getPlayer2Board())
@@ -151,14 +150,17 @@ while humanVcomp:
         playerFirst = 1
     humanVcomp=False
 
-
-
+winner = 0
 while compVcomp:
     clear()
+    print()
     game = Battleships(p1auto=True, p2auto=True, randomise=True, aiLevelP2=1, aiLevelP1=1)
     while not game.winner():
-        takeShotAt(game, "P1", "P2")
-        takeShotAt(game, "P2", "P1")
+        if takeShotAt(game, "P1", "P2") == 'P1':
+            winner = 'Player 1 wins'
+        if takeShotAt(game, "P2", "P1") == 'P2':
+            winner = 'Player 2 wins'
+    print('\n--', winner, '--\n')
     print("Player 1 fleet")
     printBoard(game.getPlayer1Board())
     print("\n\nPlayer 2 fleet")
