@@ -23,11 +23,14 @@ class Player:
             'Cruiser': [], \
             'Submarine': [], \
             'Destroyer': [] }
+        # to guard against multiple attempts to set the board
+        self.fleetLocationSet = False
+        # records shots taken for checking if valid shot (memory inefficient, should use GameBoard)
         self.shotsTaken = []
         self.movesMade = 0
-        self.__setBoard(self.boardPrimary, auto=auto, test=test, randomise=randomise)
+#        self.__setBoard(self.boardPrimary, auto=auto, test=test, randomise=randomise)
         self.autoPlayer = auto
-        if auto:
+        if self.autoPlayer:
             self.aIPlayer = Ai(aiLevel=aiLevel)
 
     def getAutoPlayer(self):
@@ -36,7 +39,7 @@ class Player:
     def getBoard(self):
         return self.boardPrimary.getBoard()
 
-    def movesMade(self):
+    def getMovesMade(self):
         return self.movesMade
 
     def getTracking(self):
@@ -62,6 +65,10 @@ class Player:
             return 'Hit', (x, y)
 
     def takeShot(self, target, xCoord=False, yCoord=False):
+        # to ensure that shots can't be taken against an empty board
+        if not self.fleetLocationSet:
+            # not sure what to return here.
+            return (False, "Fleet locations not set")
         if self.autoPlayer:
             x, y = self.aIPlayer.takeShot()
             result = target.incoming(x, y)
@@ -118,8 +125,25 @@ class Player:
             return True
         return False
 
+    def setFleetLocation(self, shipLocations):
+        """ Takes a list containing the locations of the ship's coordinates in the order
+        [[shipName, (xCoord, yCoord), direction],...]
+        These need to have the correct number of locations in or it will not be accepted,
+        valid ship placement will be also be checked and an error message returned if necessary.
+        Assuming valid inputs, locations will be written to Player location dictionary, and
+        a GameBoard instantiated. """
+        # guard to ensure that fleet location is not already populated.
+        if self.fleetLocationSet:
+            return "Fleet already set"
+        for eachShip in shipLocations:
+            shipName, coords, direction = eachShip
+            x,y = coords
+            if not self.__placeShip(self.boardPrimary, x, y, direction, shipName):
+                return "Cannot place "+shipName+", location invalid."
+        self.fleetLocationSet = True
+        return True
+
     def __setBoard(self, board, auto=False, test=False, randomise=False):
-        # Broken, see self.__writeShip
         ''' Prompts to setup board for human players
         @param player: player number 1/2
         TODO should just accept a coord, and direction, then check for validity, then return either
