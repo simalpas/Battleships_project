@@ -1,6 +1,7 @@
 from Battleships import Battleships
 import References
 from os import system, name
+import time
 
 # TODO move algorithm to set ship locations into cli, and remove from player class
 # TODO (low) change coord system in cli to use letters and then numbers
@@ -62,10 +63,84 @@ def printWinner(state):
     elif state == 'win':
         print('\nYou Win!\n\n')
     print("Player 1 fleet")
-    printBoard(game.getPlayer1Board())
+    printBoard(game.getPlayerBoard('P1'))
     print("\nPlayer 1 tracking")
-    printBoard(game.getPlayer1Board(tracking=True))
+    printBoard(game.getPlayerBoard('P1', tracking=True))
     print('')
+
+def gameSetup():
+    """ Sets up the game, aiplayers, ships placement"""
+    pass
+
+def setBoard(gameInstance, player):
+    # may need new passthrough functions in Battleships
+    # will need a lock in the gameboard class to prevent more or less ships from being placed
+    ''' Prompts to setup board for human players
+    @param player: player number 1/2
+    '''
+    auto = gameInstance.getAutoPlayer(player)
+    # TODO handle errors, and widen valid inputs
+    test = True if input('Do you want a test placement?') == 'y' else False
+    randomise = True if input('Do you want to place the ships at random?') == 'y' else False
+    # loop through all possible ships to place
+    # print name of ship to be placed
+    # get coords and direction
+    # attempt to write ship to board, checking for validity
+    # handle error if invalid placement
+
+    if not auto:
+        if test:
+            # places ships in the bottom left corner for shot testing.
+            # TODO check this works
+            for eachShip in References.getShips():
+                x, y, direction = 0, 0, 0
+                placed = False
+                while not placed:
+                    placed = self.__placeShip(board, x, y, direction, eachShip)
+                    y += 1
+        elif randomise:
+            # TODO check this works
+            self.__randomPlacement(board)
+        else:
+            # goes through the defined ships, asks for intended location
+            # checks if valid loaction, and places if so.
+            for eachShip in References.getShips():
+                print(eachShip)
+                placed = False
+                index = 0
+                while not placed:
+                    clear()
+                    print('\n')
+                    printBoard(gameInstance.getPlayerBoard(player))
+                    print('Place your '+eachShip)
+                    xCoord, yCoord, direction = getCoords(placing=True)
+                    # could check the placement in cli, but to avoid repeating myself, using functions in backend.
+                    placed =  gameInstance.setFleetLocation(player, [[eachShip, (xCoord, yCoord), direction]])
+                    if not placed:
+                        print("Sorry, you can't place it there cli")
+                        time.sleep(References.displayDelay)
+                index += 1
+                result = True
+    elif auto or randomise:
+        result = False
+    return result
+
+def checkPlacement(shipName, xCoord, yCoord, direction):
+    #iterate through list checking that ships stay inside grid, and don't start at the same place.
+    # TODO check for overlap (may involve passing all coords of ships to placeship)
+    if (xCoord+References.getShips()[shipName] > 10 and direction == 0)\
+        or (yCoord+References.getShips()[shipName] > 10 and direction == 1):
+        print('nope to check cli')
+        return False
+    """for i in range(References.getShips()[shipName]):
+        if [yCoord][xCoord] != ' ':
+            return False
+        if direction == 0:
+            xCoord += 1
+        elif direction == 1:
+            yCoord += 1"""
+    return True
+
 
 def takeShotAt(gameInstance, activePlayer, target):
     invalid = True
@@ -116,32 +191,40 @@ def clear():
         _ = system('clear')
     print("Battleships - Shoot to win!")
 
-compVcomp = True
-humanVcomp = False
+compVcomp = False
+humanVcomp = True
+cheat = True
 i=0
+
 while humanVcomp:
     clear()
     game = Battleships(p1auto=False, p2auto=True, randomise=False, aiLevelP2=1, test=True)
     playerFirst = 0
-    while not game.winner():
+    setBoard(game, 'P1')
+    while not game.getWinner():
         clear()
         if playerFirst != 0:
             result, location = takeShotAt(game, "P2", "P1")
             if result == 'P':
                 printWinner('lose')
                 break
-            print('\nComputer fired at: {loc} \nand it was a {res}\n'.format(loc=location, res=result))
+            # when a ship is sunk, all squares from that ship are returned, not in hit order
+            # TODO could rewrite so that only the last shot taken is reported and a sunk message given.
+            if result in References.ships: # ship name only returned on sink event
+                print(f"\nComputer fired at {location[0]} \nand sunk your {result}\n")
+            else:
+                print('\nComputer fired at: {loc} \nand it was a {res}\n'.format(loc=location, res=result))
         else:
             print('\n\n\n')
         print("Player 1 fleet")
-        printBoard(game.getPlayer1Board())
+        printBoard(game.getPlayerBoard('P1'))
         print("\nPlayer 1 tracking")
-        printBoard(game.getPlayer1Board(tracking=True))
+        printBoard(game.getPlayerBoard('P1', tracking=True))
         print('')
-        cheat = False
         if cheat:
             print('CHEATING COMPUTER BOARD')
-            printBoard(game.getPlayer2Board())
+            print(f"Computer fleet size = {game.player2.fleetSize['shipsRemaining']}")
+            printBoard(game.getPlayerBoard('P2'))
             print()
         result = takeShotAt(game, 'P1', 'P2')
         if result == 'P1':
@@ -154,17 +237,34 @@ winner = 0
 while compVcomp:
     clear()
     print()
-    game = Battleships(p1auto=True, p2auto=True, randomise=True, aiLevelP2=1, aiLevelP1=1)
-    while not game.winner():
-        if takeShotAt(game, "P1", "P2") == 'P1':
+    game = Battleships(p1auto=True, p2auto=True, aiLevelP2=1, aiLevelP1=1)
+    while not game.getWinner():
+        if takeShotAt(game, "P1", "P2") == "P1":
             winner = 'Player 1 wins'
-        if takeShotAt(game, "P2", "P1") == 'P2':
+            break
+        clear()
+        print('player one taken a shot')
+        if takeShotAt(game, "P2", "P1") == "P2":
             winner = 'Player 2 wins'
+            break
+        print('p2 has taken a shot')
+        # bug where by once player has less than 5 shipsRemaining they can no longer take a shot.
+        print(f"player 1 moves = {game.player1.movesMade}")
+        print(f"p1 shipsRemaining = {game.player1.fleetSize['shipsRemaining']}")
+        print(f"player 2 moves = {game.player2.movesMade}")
+        print(f"p2 shipsRemaining = {game.player2.fleetSize['shipsRemaining']}")
+        print("Player 1 fleet")
+        printBoard(game.getPlayerBoard('P1'))
+        print("\n\nPlayer 2 fleet")
+        printBoard(game.getPlayerBoard('P2'))
+        time.sleep(1)
     print('\n--', winner, '--\n')
+    print(f"player 1 moves = {game.player1.movesMade}")
+    print(f"player 2 moves = {game.player2.movesMade}")
     print("Player 1 fleet")
-    printBoard(game.getPlayer1Board())
+    printBoard(game.getPlayerBoard('P1'))
     print("\n\nPlayer 2 fleet")
-    printBoard(game.getPlayer2Board())
+    printBoard(game.getPlayerBoard('P2'))
     compVcomp = False
 
 #print(game.winner())
