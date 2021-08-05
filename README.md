@@ -28,3 +28,4 @@ This is the list of things that I think will end up with a reasonable working ve
 - [x] Have ship placement done on an individual basis so that front end can control display of the board.
 - [x] Refactor winner method so that take shot returns simpler results. Winner should only return the winner not moves made as well.
 - [x] Refactor ships placement in Player.py so that placements are done via arguments passed from the controller.
+- [x] Allow human player to auto place ships and to make a test placement

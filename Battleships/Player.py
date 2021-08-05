@@ -130,17 +130,17 @@ class Player:
         Assuming valid inputs, locations will be written to Player location dictionary, and
         a GameBoard instantiated. """
         # guard to ensure that fleet location is not already populated.
-        print('setFleetlocation')
+        #print('setFleetlocation')
         # TODO check that shipLocations is of correct size
         if self.fleetSize['shipsRemaining'] == 5:
-            print('true fleetLocation')
+            #print('true fleetLocation')
             return False
         elif self.autoPlayer or randomise:
             #print('setting random')
             self.__randomPlacement(self.boardPrimary)
-            print('auto player board setup done')
+            #print('auto player board setup done')
         elif len(shipLocations) >= 1:
-            print('setting from list')
+            #print('setting from list')
             for eachShip in shipLocations:
                 print(eachShip)
                 shipName, coords, direction = eachShip
@@ -148,18 +148,20 @@ class Player:
                 if not self.__placeShip(self.boardPrimary, x, y, direction, shipName):
                     print('invalid placement in Player.setFleetLocation()')
                     return False
-            print(f"{shipName} location set")
+            #print(f"{shipName} location set")
             return True
+        # meaningless to be removed
         elif len(shipLocations) == 10:
             print('only one ship')
             shipName, (x,y), direction = shipLocations
             if not self.__placeship(self.boardPrimary, x, y, direction, shipName):
                 return "Cannot place "+shipName+", location invalid."
         else:
-            print('Empty board created')
+            #print('Empty board created')
+            pass
 
     def __randomPlacement(self, board):
-        print('randomPlacement')
+        #print('randomPlacement')
         #if self.fleetLocationSet:
         #    return False
         #else:
@@ -172,31 +174,3 @@ class Player:
                 placed = self.__placeShip(board, x, y, direction, eachShip)
         self.fleetLocationSet = True
         return True
-
-"""    def __getCoords(self, placing=False):
-        failed = True
-        while failed:
-            try:
-                xCoord = int(input('X-coordinate (0-9): '))
-                if xCoord < 0 or xCoord > 9:
-                    raise ValueError
-                yCoord = int(input('y-coordinate (0-9): '))
-                if yCoord < 0 or yCoord > 9:
-                    raise ValueError
-                direction = False #default for reuse
-                if placing:
-                    direction = input('To the right, or up? (r/u): ')
-                    if not(direction == 'r' or direction == 'u'):
-                        raise ValueError
-                    elif direction == 'r':
-                        direction = 0
-                    elif direction == 'u':
-                        direction = 1
-                failed = False
-            except ValueError:
-                print('Sorry, your input was not recognised, please try again')
-        if placing == False:
-            return xCoord, yCoord, direction
-        return xCoord, yCoord, direction"""
-
-

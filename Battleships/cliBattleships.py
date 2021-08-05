@@ -3,10 +3,11 @@ import References
 from os import system, name
 import time
 
-# TODO move algorithm to set ship locations into cli, and remove from player class
+# DONE move algorithm to set ship locations into cli, and remove from player class
 # TODO (low) change coord system in cli to use letters and then numbers
 # DONE move function to get shot coords from player into cli.
 
+validInputs = ['y', 'yes', 'Y' 'Yes', 'YES', 'ok', 'Ok', 'OK', 'o']
 
 ansiColours = {\
         'black' : '\033[30m', \
@@ -70,9 +71,14 @@ def printWinner(state):
     printBoard(game.getPlayerBoard('P1', tracking=True))
     print('')
 
-def gameSetup():
+def runGame():
     """ Sets up the game, aiplayers, ships placement"""
-    pass
+    if input('Single player game? ') in validInputs:
+        humanVcomp()
+    elif input('Fully automatic? ') in validInputs:
+        compvcomp()
+    else:
+        print('Exiting game.')
 
 def setBoard(gameInstance, player):
     # TODO 
@@ -81,11 +87,10 @@ def setBoard(gameInstance, player):
     '''
     auto = gameInstance.getAutoPlayer(player)
     # TODO handle errors, and widen valid inputs
-    validInputs = ['y', 'yes', 'Y' 'Yes', 'YES', 'ok', 'Ok', 'OK', 'o']
-    test = True if input('Do you want a test placement? ') in validInputs else False
+    test = False
+    #test = True if input('Do you want a test placement? ') in validInputs else False
     if not test:
         randomise = True if input('Do you want to place the ships at random? ') in validInputs else False
-
     if not auto:
         if test:
             # places ships in the bottom left corner for shot testing.
@@ -191,82 +196,85 @@ def clear():
         _ = system('clear')
     print("Battleships - Shoot to win!")
 
-compVcomp = True
-humanVcomp = False
-cheat = True
-i=0
+#i=0
 
-while humanVcomp:
-    clear()
-    game = Battleships(p1auto=False, p2auto=True, aiLevelP2=1)
-    playerFirst = 0
-    setBoard(game, 'P1')
-    while not game.getWinner():
+def humanVcomp():
+    humanVcomp = True
+    while humanVcomp:
         clear()
-        if playerFirst != 0:
-            result, location = takeShotAt(game, "P2", "P1")
-            if result == 'P':
-                printWinner('lose')
-                break
-            # when a ship is sunk, all squares from that ship are returned, not in hit order
-            # TODO could rewrite so that only the last shot taken is reported and a sunk message given.
-            if result in References.ships: # ship name only returned on sink event
-                print(f"\nComputer fired at {location[0]} \nand sunk your {result}\n")
+        game = Battleships(p1auto=False, p2auto=True, aiLevelP2=1)
+        playerFirst = 0
+        setBoard(game, 'P1')
+        while not game.getWinner():
+            clear()
+            if playerFirst != 0:
+                result, location = takeShotAt(game, "P2", "P1")
+                if result == 'P':
+                    printWinner('lose')
+                    break
+                # when a ship is sunk, all squares from that ship are returned, not in hit order
+                # TODO could rewrite so that only the last shot taken is reported and a sunk message given.
+                if result in References.ships: # ship name only returned on sink event
+                    print(f"\nComputer fired at {location[0]} \nand sunk your {result}\n")
+                else:
+                    print('\nComputer fired at: {loc} \nand it was a {res}\n'.format(loc=location, res=result))
             else:
-                print('\nComputer fired at: {loc} \nand it was a {res}\n'.format(loc=location, res=result))
-        else:
-            print('\n\n\n')
-        print("Player 1 fleet")
-        printBoard(game.getPlayerBoard('P1'))
-        print("\nPlayer 1 tracking")
-        printBoard(game.getPlayerBoard('P1', tracking=True))
-        print('')
-        if cheat:
-            print('CHEATING COMPUTER BOARD')
-            print(f"Computer fleet size = {game.player2.fleetSize['shipsRemaining']}")
-            printBoard(game.getPlayerBoard('P2'))
-            print()
-        result = takeShotAt(game, 'P1', 'P2')
-        if result == 'P1':
-            printWinner('win')
-            break
-        playerFirst = 1
-    humanVcomp=False
+                print('\n\n\n')
+            print("Player 1 fleet")
+            printBoard(game.getPlayerBoard('P1'))
+            print("\nPlayer 1 tracking")
+            printBoard(game.getPlayerBoard('P1', tracking=True))
+            print('')
+            if cheat:
+                print('CHEATING COMPUTER BOARD')
+                print(f"Computer fleet size = {game.player2.fleetSize['shipsRemaining']}")
+                printBoard(game.getPlayerBoard('P2'))
+                print()
+            result = takeShotAt(game, 'P1', 'P2')
+            if result == 'P1':
+                printWinner('win')
+                break
+            playerFirst = 1
+        humanVcomp=False
 
-winner = 0
-while compVcomp:
-    clear()
-    print()
-    game = Battleships(p1auto=True, p2auto=True, aiLevelP2=1, aiLevelP1=1)
-    while not game.getWinner():
-        if takeShotAt(game, "P1", "P2") == "P1":
-            winner = 'Player 1 wins'
-            break
+def compvcomp():
+    winner = 0
+    compVcomp = True
+    while compVcomp:
         clear()
-        #print('player one taken a shot')
-        if takeShotAt(game, "P2", "P1") == "P2":
-            winner = 'Player 2 wins'
-            break
-        print('\n\n\n\n')
-        #print('p2 has taken a shot\n')
-        #print(f"\nplayer 1 moves = {game.player1.movesMade}")
-        #print(f"p1 shipsRemaining = {game.player1.fleetSize['shipsRemaining']}")
-        #print(f"player 2 moves = {game.player2.movesMade}")
-        #print(f"p2 shipsRemaining = {game.player2.fleetSize['shipsRemaining']}")
+        print()
+        game = Battleships(p1auto=True, p2auto=True, aiLevelP2=1, aiLevelP1=1)
+        while not game.getWinner():
+            if takeShotAt(game, "P1", "P2") == "P1":
+                winner = 'Player 1 wins'
+                break
+            clear()
+            #print('player one taken a shot')
+            if takeShotAt(game, "P2", "P1") == "P2":
+                winner = 'Player 2 wins'
+                break
+            print('\n\n\n\n')
+            #print('p2 has taken a shot\n')
+            #print(f"\nplayer 1 moves = {game.player1.movesMade}")
+            #print(f"p1 shipsRemaining = {game.player1.fleetSize['shipsRemaining']}")
+            #print(f"player 2 moves = {game.player2.movesMade}")
+            #print(f"p2 shipsRemaining = {game.player2.fleetSize['shipsRemaining']}")
+            print("Player 1 fleet")
+            printBoard(game.getPlayerBoard('P1'))
+            print("\n\nPlayer 2 fleet")
+            printBoard(game.getPlayerBoard('P2'))
+            #time.sleep(1)
+        clear()
+        print('\n--', winner, '--\n')
+        print(f"player 1 moves = {game.player1.movesMade}")
+        print(f"player 2 moves = {game.player2.movesMade}")
         print("Player 1 fleet")
         printBoard(game.getPlayerBoard('P1'))
         print("\n\nPlayer 2 fleet")
         printBoard(game.getPlayerBoard('P2'))
-        #time.sleep(1)
-    clear()
-    print('\n--', winner, '--\n')
-    print(f"player 1 moves = {game.player1.movesMade}")
-    print(f"player 2 moves = {game.player2.movesMade}")
-    print("Player 1 fleet")
-    printBoard(game.getPlayerBoard('P1'))
-    print("\n\nPlayer 2 fleet")
-    printBoard(game.getPlayerBoard('P2'))
-    print()
-    compVcomp = False
+        print()
+        compVcomp = False
 
-#print(game.winner())
+if __name__ == '__main__':
+    cheat = True if input('Cheat mode? ') in validInputs else False
+    runGame()
