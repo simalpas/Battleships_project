@@ -91,16 +91,19 @@ def setBoard(gameInstance, player):
     if not auto:
         if test:
             # places ships in the bottom left corner for shot testing.
-            # TODO check this works
+            x, y, direction = 0, 0, 0
             for eachShip in References.getShips():
-                x, y, direction = 0, 0, 0
-                placed = False
-                while not placed:
-                    placed = self.__placeShip(board, x, y, direction, eachShip)
-                    y += 1
+                # in case the ships can't be placed for whatever reason
+                placed = gameInstance.setFleetLocation(player, [[eachShip, (x,y), direction]])
+                if not placed:
+                    print('failed to place')
+                    return False
+                y += 1
+            result = True
         elif randomise:
-            # TODO check this works
-            self.__randomPlacement(board)
+            # TODO make this work
+
+            pass
         else:
             # goes through the defined ships, asks for intended location
             # checks if valid loaction, and places if so.

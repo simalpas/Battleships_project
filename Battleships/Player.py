@@ -16,22 +16,24 @@ class Player:
             'C' : 3, \
             'S' : 3, \
             'D' : 2, \
-            'shipsRemaining': 5 }
+            'shipsRemaining': 0 }
         # Location of the ships in the fleet
         self.fleetLocation = { 'Aircraft Carrier': [], \
             'Battleship': [], \
             'Cruiser': [], \
             'Submarine': [], \
             'Destroyer': [] }
-        # to guard against multiple attempts to set the board
-        self.fleetLocationSet = False
+        # TODO wrte a guard that stops shots being taken against a board that hasn't been setup
+        #self.fleetLocationSet = False
         # records shots taken for checking if valid shot (memory inefficient, should use GameBoard)
         self.shotsTaken = []
         self.movesMade = 0
 #        self.__setBoard(self.boardPrimary, auto=auto, test=test, randomise=randomise)
+        self.randomisedShips = randomise
         self.autoPlayer = auto
         if self.autoPlayer:
             self.aIPlayer = Ai(aiLevel=aiLevel)
+        self.setFleetLocation()
 
     def getAutoPlayer(self):
         return self.autoPlayer
@@ -58,17 +60,13 @@ class Player:
              self.fleetSize['shipsRemaining'] -= 1
              self.boardPrimary.setSquare(x, y, References.getSymbols()['Sunk'])
              self.__sinkShip(self.fleetLocation[shipName], self.boardPrimary)
-             return shipName, self.fleetLocation[shipName]
+             return shipName, self.fleetLocation[shipName] #currently needed for Ai to sink ships
         elif squareContents != ' ':
             self.fleetSize[squareContents] -= 1
             self.boardPrimary.setSquare(x, y, References.getSymbols()['Hit'])
             return 'Hit', (x, y)
 
     def takeShot(self, target, xCoord=False, yCoord=False):
-        # to ensure that shots can't be taken against an empty board
-        if not self.fleetLocationSet:
-            # not sure what to return here.
-            return (False, "Fleet locations not set")
         if self.autoPlayer:
             x, y = self.aIPlayer.takeShot()
             result = target.incoming(x, y)
@@ -104,6 +102,7 @@ class Player:
                 xCoord += 1
             elif direction == 1:
                 yCoord += 1
+        self.fleetSize['shipsRemaining'] += 1
 
     def __checkPlacement(self, grid, xCoord, yCoord, direction, shipName):
         if (xCoord+References.getShips()[shipName] > 10 and direction == 0)\
@@ -119,13 +118,12 @@ class Player:
         return True
 
     def __placeShip(self, grid, xCoord, yCoord, direction, shipName):
-        # broken, see self.__writeShip
         if self.__checkPlacement(grid, xCoord, yCoord, direction, shipName):
             self.__writeShip(grid, xCoord, yCoord, direction, shipName)
             return True
         return False
 
-    def setFleetLocation(self, shipLocations):
+    def setFleetLocation(self, shipLocations=[], randomise=False):
         """ Takes a list containing the locations of the ship's coordinates in the order
         [[shipName, (xCoord, yCoord), direction],...]
         These need to have the correct number of locations in or it will not be accepted,
@@ -133,60 +131,48 @@ class Player:
         Assuming valid inputs, locations will be written to Player location dictionary, and
         a GameBoard instantiated. """
         # guard to ensure that fleet location is not already populated.
-        if self.fleetLocationSet:
-            return "Fleet already set"
-        for eachShip in shipLocations:
-            shipName, coords, direction = eachShip
-            x,y = coords
-            if not self.__placeShip(self.boardPrimary, x, y, direction, shipName):
+        print('setFleetlocation')
+        # TODO check that shipLocations is of correct size
+        if self.fleetSize['shipsRemaining'] == 5:
+            print('true fleetLocation')
+            return False
+        elif self.autoPlayer or self.randomisedShips:
+            #print('setting random')
+            self.__randomPlacement(self.boardPrimary)
+            print('auto player board setup done')
+        elif len(shipLocations) >= 1:
+            print('setting from list')
+            for eachShip in shipLocations:
+                print(eachShip)
+                shipName, coords, direction = eachShip
+                x,y = coords
+                if not self.__placeShip(self.boardPrimary, x, y, direction, shipName):
+                    print('invalid placement in Player.setFleetLocation()')
+                    return False
+            print(f"{shipName} location set")
+            return True
+        elif len(shipLocations) == 10:
+            print('only one ship')
+            shipName, (x,y), direction = shipLocations
+            if not self.__placeship(self.boardPrimary, x, y, direction, shipName):
                 return "Cannot place "+shipName+", location invalid."
-        self.fleetLocationSet = True
-        return True
-
-    def __setBoard(self, board, auto=False, test=False, randomise=False):
-        ''' Prompts to setup board for human players
-        @param player: player number 1/2
-        TODO should just accept a coord, and direction, then check for validity, then return either
-        true of false depending on sucessful placement.
-        '''
-        # TODO refactor to place each ship individualy with
-        # separate calls to a new function
-        #TODO move functions to print the board into front end.
-        if not auto:
-            if test:
-                # places ships in the bottom left corner for shot testing.
-                for eachShip in References.getShips():
-                    x, y, direction = 0, 0, 0
-                    placed = False
-                    while not placed:
-                        placed = self.__placeShip(board, x, y, direction, eachShip)
-                        y += 1
-            elif randomise:
-                self.__randomPlacement(board)
-            else:
-                # goes through the defined ships, asks for intended location
-                # checks if valid loaction, and places if so.
-                for eachShip in References.getShips():
-                    placed = False
-                    while not placed:
-                        print(board)
-                        print('Place your '+eachShip)
-                        xCoord, yCoord, direction = self.__getCoords(placing=True)
-                        placed = self.__placeShip(board, xCoord, yCoord, direction, eachShip)
-                        if not placed:
-                            print("Sorry, you can't place it there")
-                            time.sleep(References.displayDelay)
-        elif auto or randomise:
-            self.__randomPlacement(board)
+        else:
+            print('Empty board created')
 
     def __randomPlacement(self, board):
-        for eachShip in References.getShips():
+        print('randomPlacement')
+        #if self.fleetLocationSet:
+        #    return False
+        #else:
+        for eachShip in References.getShips().keys():
             placed = False
             while not placed:
                 x = random.randrange(10)
                 y = random.randrange(10)
                 direction = random.randrange(2)
                 placed = self.__placeShip(board, x, y, direction, eachShip)
+        self.fleetLocationSet = True
+        return True
 
 """    def __getCoords(self, placing=False):
         failed = True

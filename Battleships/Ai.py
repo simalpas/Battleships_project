@@ -28,6 +28,7 @@ class Ai():
 
     def recordShot(self, result, x, y):
         # records in the hit list (shiptracking) when a ship has been sunk or just hit
+        # requires the sunken ship locations to be passed to it from Player.takeShot()
         if result[0] == 'Hit':
             self.shiptracking['unsunk'].append((x, y))
         if result[0] in References.getShips():
