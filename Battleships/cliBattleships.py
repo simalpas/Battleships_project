@@ -73,20 +73,16 @@ def gameSetup():
     pass
 
 def setBoard(gameInstance, player):
-    # may need new passthrough functions in Battleships
-    # will need a lock in the gameboard class to prevent more or less ships from being placed
+    # TODO 
     ''' Prompts to setup board for human players
     @param player: player number 1/2
     '''
     auto = gameInstance.getAutoPlayer(player)
     # TODO handle errors, and widen valid inputs
-    test = True if input('Do you want a test placement?') == 'y' else False
-    randomise = True if input('Do you want to place the ships at random?') == 'y' else False
-    # loop through all possible ships to place
-    # print name of ship to be placed
-    # get coords and direction
-    # attempt to write ship to board, checking for validity
-    # handle error if invalid placement
+    validInputs = ['y', 'yes', 'Y' 'Yes', 'YES', 'ok', 'Ok', 'OK', 'o']
+    test = True if input('Do you want a test placement? ') in validInputs else False
+    if not test:
+        randomise = True if input('Do you want to place the ships at random? ') in validInputs else False
 
     if not auto:
         if test:
@@ -101,9 +97,8 @@ def setBoard(gameInstance, player):
                 y += 1
             result = True
         elif randomise:
-            # TODO make this work
-
-            pass
+            # places ships at random
+            result = gameInstance.setFleetLocation(player, [], randomise=True)
         else:
             # goes through the defined ships, asks for intended location
             # checks if valid loaction, and places if so.
@@ -201,7 +196,7 @@ i=0
 
 while humanVcomp:
     clear()
-    game = Battleships(p1auto=False, p2auto=True, randomise=False, aiLevelP2=1, test=True)
+    game = Battleships(p1auto=False, p2auto=True, aiLevelP2=1)
     playerFirst = 0
     setBoard(game, 'P1')
     while not game.getWinner():

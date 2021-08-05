@@ -5,7 +5,7 @@ import time
 import random
 
 class Player:
-    def __init__(self, auto=False, test=False, aiLevel=0, randomise=False):
+    def __init__(self, auto=False, test=False, aiLevel=0):
         # TODO remove gameboards for computer players
         self.boardPrimary = GameBoard(10)
         self.boardTracking = GameBoard(10)
@@ -29,7 +29,6 @@ class Player:
         self.shotsTaken = []
         self.movesMade = 0
 #        self.__setBoard(self.boardPrimary, auto=auto, test=test, randomise=randomise)
-        self.randomisedShips = randomise
         self.autoPlayer = auto
         if self.autoPlayer:
             self.aIPlayer = Ai(aiLevel=aiLevel)
@@ -136,7 +135,7 @@ class Player:
         if self.fleetSize['shipsRemaining'] == 5:
             print('true fleetLocation')
             return False
-        elif self.autoPlayer or self.randomisedShips:
+        elif self.autoPlayer or randomise:
             #print('setting random')
             self.__randomPlacement(self.boardPrimary)
             print('auto player board setup done')
