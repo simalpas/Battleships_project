@@ -37,6 +37,8 @@ hitColour  = ansiColours['boldRed']
 sunkColour = ansiColours['red']
 
 def printBoard(board):
+    # TODO aloow printing of boards side by side
+    # TODO move cursor to print only changing information (low)
     yLabel = 9
     string = boardColour+'   _______________________________________\n'+resetColour
     for i in range(len(board)-1, -1, -1):
@@ -189,8 +191,8 @@ def clear():
         _ = system('clear')
     print("Battleships - Shoot to win!")
 
-compVcomp = False
-humanVcomp = True
+compVcomp = True
+humanVcomp = False
 cheat = True
 i=0
 
@@ -241,21 +243,22 @@ while compVcomp:
             winner = 'Player 1 wins'
             break
         clear()
-        print('player one taken a shot')
+        #print('player one taken a shot')
         if takeShotAt(game, "P2", "P1") == "P2":
             winner = 'Player 2 wins'
             break
-        print('p2 has taken a shot')
-        # bug where by once player has less than 5 shipsRemaining they can no longer take a shot.
-        print(f"player 1 moves = {game.player1.movesMade}")
-        print(f"p1 shipsRemaining = {game.player1.fleetSize['shipsRemaining']}")
-        print(f"player 2 moves = {game.player2.movesMade}")
-        print(f"p2 shipsRemaining = {game.player2.fleetSize['shipsRemaining']}")
+        print('\n\n\n\n')
+        #print('p2 has taken a shot\n')
+        #print(f"\nplayer 1 moves = {game.player1.movesMade}")
+        #print(f"p1 shipsRemaining = {game.player1.fleetSize['shipsRemaining']}")
+        #print(f"player 2 moves = {game.player2.movesMade}")
+        #print(f"p2 shipsRemaining = {game.player2.fleetSize['shipsRemaining']}")
         print("Player 1 fleet")
         printBoard(game.getPlayerBoard('P1'))
         print("\n\nPlayer 2 fleet")
         printBoard(game.getPlayerBoard('P2'))
-        time.sleep(1)
+        #time.sleep(1)
+    clear()
     print('\n--', winner, '--\n')
     print(f"player 1 moves = {game.player1.movesMade}")
     print(f"player 2 moves = {game.player2.movesMade}")
@@ -263,6 +266,7 @@ while compVcomp:
     printBoard(game.getPlayerBoard('P1'))
     print("\n\nPlayer 2 fleet")
     printBoard(game.getPlayerBoard('P2'))
+    print()
     compVcomp = False
 
 #print(game.winner())
