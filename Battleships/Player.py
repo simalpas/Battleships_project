@@ -33,9 +33,16 @@ class Player:
         if self.autoPlayer:
             self.aIPlayer = Ai(aiLevel=aiLevel)
         self.setFleetLocation()
+        self.latestShot = ()
 
     def getAutoPlayer(self):
         return self.autoPlayer
+
+    def getLatestShot(self):
+        if self.autoPlayer:
+            return self.aIPlayer.getLatestShot()
+        else:
+            return self.latestShot
 
     def getBoard(self):
         return self.boardPrimary.getBoard()
@@ -73,6 +80,7 @@ class Player:
         else:
             if (xCoord,yCoord) in self.shotsTaken:
                 return -1
+            self.latestShot = (xCoord, yCoord)
             self.shotsTaken.append((xCoord,yCoord))
             result = target.incoming(xCoord, yCoord)
             self.__recordShot(result, xCoord, yCoord)
@@ -129,11 +137,8 @@ class Player:
         valid ship placement will be also be checked and an error message returned if necessary.
         Assuming valid inputs, locations will be written to Player location dictionary, and
         a GameBoard instantiated. """
-        # guard to ensure that fleet location is not already populated.
-        #print('setFleetlocation')
-        # TODO check that shipLocations is of correct size
+        # TODO employ defensive programming to protect from cheating
         if self.fleetSize['shipsRemaining'] == 5:
-            #print('true fleetLocation')
             return False
         elif self.autoPlayer or randomise:
             #print('setting random')
@@ -142,23 +147,13 @@ class Player:
         elif len(shipLocations) >= 1:
             #print('setting from list')
             for eachShip in shipLocations:
-                print(eachShip)
                 shipName, coords, direction = eachShip
                 x,y = coords
                 if not self.__placeShip(self.boardPrimary, x, y, direction, shipName):
-                    print('invalid placement in Player.setFleetLocation()')
+                    #print('invalid placement in Player.setFleetLocation()')
                     return False
-            #print(f"{shipName} location set")
             return True
-        # meaningless to be removed
-        elif len(shipLocations) == 10:
-            print('only one ship')
-            shipName, (x,y), direction = shipLocations
-            if not self.__placeship(self.boardPrimary, x, y, direction, shipName):
-                return "Cannot place "+shipName+", location invalid."
-        else:
-            #print('Empty board created')
-            pass
+        pass
 
     def __randomPlacement(self, board):
         #print('randomPlacement')

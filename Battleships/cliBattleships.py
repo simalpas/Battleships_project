@@ -36,24 +36,29 @@ shipColour = ansiColours['yellow']
 missColour = ansiColours['cyan']
 hitColour  = ansiColours['boldRed']
 sunkColour = ansiColours['red']
+highlightColour = ansiColours['boldMagenta']
 
-def printBoard(board):
+def printBoard(board, latestShot=False):
     # TODO aloow printing of boards side by side
     # TODO move cursor to print only changing information (low)
+    # TODO highlight latest shot
     yLabel = 9
     string = boardColour+'   _______________________________________\n'+resetColour
     for i in range(len(board)-1, -1, -1):
         string += yLabelColour+str(yLabel)+resetColour
-        for j in board[i]:
+        for j in range(len(board[i])):
             string += boardColour+' | ' 
-            if j == References.symbols['Hit']:
-                string += hitColour + j + resetColour
-            elif j == References.symbols['Miss']:
-                string += missColour + j + resetColour
-            elif j == References.symbols['Sunk']:
-                string += sunkColour + j + resetColour
+            #highlight latest shot
+            if (j,i) == latestShot:
+                string += highlightColour + board[i][j] + resetColour
+            elif board[i][j] == References.symbols['Hit']:
+                string += hitColour + board[i][j] + resetColour
+            elif board[i][j] == References.symbols['Miss']:
+                string += missColour + board[i][j] + resetColour
+            elif board[i][j] == References.symbols['Sunk']:
+                string += sunkColour + board[i][j] + resetColour
             else:
-                string += shipColour + j + resetColour
+                string += shipColour + board[i][j] + resetColour
         string += boardColour + ' |\n' + resetColour
         yLabel -= 1
     string += xLabelColour + '    0   1   2   3   4   5   6   7   8   9' + resetColour
@@ -73,12 +78,14 @@ def printWinner(state):
 
 def runGame():
     """ Sets up the game, aiplayers, ships placement"""
+    clear()
+    print()
     if input('Single player game? ') in validInputs:
         humanVcomp()
-    elif input('Fully automatic? ') in validInputs:
-        compvcomp()
+    #elif input('Fully automatic? ') in validInputs:
+    #    compvcomp()
     else:
-        print('Exiting game.')
+       compVcomp() 
 
 def setBoard(gameInstance, player):
     # TODO 
@@ -90,7 +97,7 @@ def setBoard(gameInstance, player):
     test = False
     #test = True if input('Do you want a test placement? ') in validInputs else False
     if not test:
-        randomise = True if input('Do you want to place the ships at random? ') in validInputs else False
+        randomise = True if input('\nDo you want to place the ships at random? ') in validInputs else False
     if not auto:
         if test:
             # places ships in the bottom left corner for shot testing.
@@ -215,9 +222,9 @@ def humanVcomp():
                 # when a ship is sunk, all squares from that ship are returned, not in hit order
                 # TODO could rewrite so that only the last shot taken is reported and a sunk message given.
                 if result in References.ships: # ship name only returned on sink event
-                    print(f"\nComputer fired at {location[0]} \nand sunk your {result}\n")
+                    print(f"\nComputer fired at {game.getLatestShot('P2')} and sunk your {result}\n")
                 else:
-                    print('\nComputer fired at: {loc} \nand it was a {res}\n'.format(loc=location, res=result))
+                    print('\nComputer fired at {loc} and it was a {res}\n'.format(loc=location, res=result))
             else:
                 print('\n\n\n')
             print("Player 1 fleet")
@@ -237,7 +244,7 @@ def humanVcomp():
             playerFirst = 1
         humanVcomp=False
 
-def compvcomp():
+def compVcomp():
     winner = 0
     compVcomp = True
     while compVcomp:
@@ -248,11 +255,10 @@ def compvcomp():
             if takeShotAt(game, "P1", "P2") == "P1":
                 winner = 'Player 1 wins'
                 break
-            clear()
-            #print('player one taken a shot')
             if takeShotAt(game, "P2", "P1") == "P2":
                 winner = 'Player 2 wins'
                 break
+            clear()
             print('\n\n\n\n')
             #print('p2 has taken a shot\n')
             #print(f"\nplayer 1 moves = {game.player1.movesMade}")
@@ -260,18 +266,20 @@ def compvcomp():
             #print(f"player 2 moves = {game.player2.movesMade}")
             #print(f"p2 shipsRemaining = {game.player2.fleetSize['shipsRemaining']}")
             print("Player 1 fleet")
-            printBoard(game.getPlayerBoard('P1'))
+            printBoard(game.getPlayerBoard('P1'), latestShot = game.getLatestShot('P2'))
             print("\n\nPlayer 2 fleet")
-            printBoard(game.getPlayerBoard('P2'))
-            #time.sleep(1)
+            printBoard(game.getPlayerBoard('P2'), latestShot = game.getLatestShot('P1'))
+            time.sleep(0.5)
         clear()
         print('\n--', winner, '--\n')
         print(f"player 1 moves = {game.player1.movesMade}")
         print(f"player 2 moves = {game.player2.movesMade}")
+        print(f"P1 latest shot is = {game.getLatestShot('P1')}")
+        print(f"P2 latest shot is = {game.getLatestShot('P2')}")
         print("Player 1 fleet")
-        printBoard(game.getPlayerBoard('P1'))
+        printBoard(game.getPlayerBoard('P1'), latestShot = game.getLatestShot('P2'))
         print("\n\nPlayer 2 fleet")
-        printBoard(game.getPlayerBoard('P2'))
+        printBoard(game.getPlayerBoard('P2'), latestShot = game.getLatestShot('P1'))
         print()
         compVcomp = False
 

@@ -13,18 +13,20 @@ class Ai():
             'Cruiser': 0, \
             'Submarine': 0, \
             'Destroyer': 0}
+        self.latestShot = (0,0)
         self.testingShots = [(0,4), (1,4)]
     
     def takeShot(self):
         # selects a square to shoot at
         if self.aiLevel == 0:
-            return self.__randomShots()
+            self.latestShot = self.__randomShots()
         elif self.aiLevel == 1:
-            return self.__randomWithShipTracking()
+            self.latestShot = self.__randomWithShipTracking()
         elif self.aiLevel == 'testing':
-            return self.__testingShots()
+            self.latestShot = self.__testingShots()
         else:
-            return self.__randomWithShipTracking()
+            self.latestShot = self.__randomWithShipTracking()
+        return self.latestShot
 
     def recordShot(self, result, x, y):
         # records in the hit list (shiptracking) when a ship has been sunk or just hit
@@ -39,6 +41,9 @@ class Ai():
                 self.shiptracking['unsunk'].pop(self.shiptracking['unsunk'].index(i))
             self.shiptracking[result[0]] = 1
         
+    def getLatestShot(self):
+        return self.latestShot
+
     def __randomShots(self):
         random.shuffle(self.possibleShots)
         return self.possibleShots.pop()
