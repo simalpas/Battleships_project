@@ -1,4 +1,4 @@
-Python project to write a cli version of the classic game battleships. Uses classes. Works as an API, called from a seperate file, only imports needed are the references.
+Python project to write a cli version of the classic game battleships. Uses classes. Works as an API, called from a seperate file, only imports needed are the references. Started as a project to cement my knowledge of the MVC patten, python classes, OOP and parts of the python standard libaries.
 
 Features:
   human player input to place ships (checks for valid ship placements)
