@@ -34,3 +34,5 @@ This is the list of things that I think will end up with a reasonable working ve
 - [ ] Build a web front end
 - [ ] Build a server implementation that provides the results of the API calls, possibly containerised
 - [ ] Host server on cloud instance (using Oracle cloud free tier)
+
+In the future I plan to rebuild this in c++, keeping for the command line.
