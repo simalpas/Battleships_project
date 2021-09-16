@@ -76,7 +76,7 @@ def printWinner(state):
     printBoard(game.getPlayerBoard('P1', tracking=True))
     print('')
 
-def runGame():
+def run():
     """ Sets up the game, aiplayers, ships placement"""
     clear()
     print()
@@ -285,4 +285,4 @@ def compVcomp():
 
 if __name__ == '__main__':
     cheat = True if input('Cheat mode? ') in validInputs else False
-    runGame()
+    run()
