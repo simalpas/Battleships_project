@@ -1,3 +1,4 @@
+# no longer used as this has been moved into CliBattleships.py
 #class References:
     #class vars
     # The ships : length of ship

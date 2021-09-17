@@ -5,10 +5,10 @@ import time
 import random
 
 class Player:
-    def __init__(self, auto=False, test=False, aiLevel=0):
+    def __init__(self, auto=False, test=False, aiLevel=0, boardSize=10):
         # TODO remove gameboards for computer players
-        self.boardPrimary = GameBoard(10)
-        self.boardTracking = GameBoard(10)
+        self.boardPrimary = GameBoard(boardSize)
+        self.boardTracking = GameBoard(boardSize)
         # What remains of the fleet
         self.fleetSize = {\
             'A' : 5, \
@@ -23,7 +23,7 @@ class Player:
             'Cruiser': [], \
             'Submarine': [], \
             'Destroyer': [] }
-        # TODO wrte a guard that stops shots being taken against a board that hasn't been setup
+        # TODO write a guard that stops shots being taken against a board that hasn't been setup
         #self.fleetLocationSet = False
         # records shots taken for checking if valid shot (memory inefficient, should use GameBoard)
         self.shotsTaken = []

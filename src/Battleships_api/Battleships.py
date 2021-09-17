@@ -6,10 +6,10 @@ class Battleships:
     Singleton class
     '''
 
-    def __init__(self, p1auto=False, p2auto=True, test=False, aiLevelP1=0, aiLevelP2=0):
+    def __init__(self, p1auto=False, p2auto=True, test=False, aiLevelP1=0, aiLevelP2=0, boardSize=10):
         # Setup new players
-        self.player1 = Player(auto=p1auto, test=test, aiLevel=aiLevelP1)
-        self.player2 = Player(auto=p2auto, test=test, aiLevel=aiLevelP2)
+        self.player1 = Player(auto=p1auto, test=test, aiLevel=aiLevelP1, boardSize=boardSize)
+        self.player2 = Player(auto=p2auto, test=test, aiLevel=aiLevelP2, boardSize=boardSize)
 
     # @param coords, int 0:size
     # @param activePlayer/target : P1/P2
