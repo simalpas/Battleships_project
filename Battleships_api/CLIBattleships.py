@@ -1,4 +1,5 @@
-from Battleships import Battleships
+from .Battleships import Battleships
+from . import References
 from os import system, name
 import time
 
@@ -6,79 +7,79 @@ import time
 # TODO (low) change coord system in cli to use letters and then numbers
 # DONE move function to get shot coords from player into cli.
 
-class References:
-    # The ships : length of ship
-    ships = { 'Aircraft Carrier' : 5, \
-                'Battleship' : 4, \
-                'Cruiser' : 3, \
-                'Submarine' : 3, \
-                'Destroyer' : 2 \
-    }
-    # ship symbol translation
-    symbols = {'Aircraft Carrier' : 'A', \
-                    'Battleship' : 'B', \
-                    'Cruiser' : 'C', \
-                    'Submarine': 'S', \
-                    'Destroyer' : 'D', \
-                    'Hit' : 'X', \
-                    'Miss' : 'o', \
-                    'Empty' : ' ',
-                    'Sunk' : '#' \
-    }
-    # the delay used to display errors before clearing the screen
-    displayDelay =  2
+# class References:
+#     # The ships : length of ship
+#     ships = { 'Aircraft Carrier' : 5, \
+#                 'Battleship' : 4, \
+#                 'Cruiser' : 3, \
+#                 'Submarine' : 3, \
+#                 'Destroyer' : 2 \
+#     }
+#     # ship symbol translation
+#     symbols = {'Aircraft Carrier' : 'A', \
+#                     'Battleship' : 'B', \
+#                     'Cruiser' : 'C', \
+#                     'Submarine': 'S', \
+#                     'Destroyer' : 'D', \
+#                     'Hit' : 'X', \
+#                     'Miss' : 'o', \
+#                     'Empty' : ' ',
+#                     'Sunk' : '#' \
+#     }
+#     # the delay used to display errors before clearing the screen
+#     displayDelay =  2
 
-    # The size of the gameboard
-    #TODO update classes to use this variable, frontend will need to set this?
-    sizeOfBoard = 10
+#     # The size of the gameboard
+#     #TODO update classes to use this variable, frontend will need to set this?
+#     sizeOfBoard = 10
 
-    def getShips():
-        return ships
+#     def getShips():
+#         return ships
 
-    def getSymbols():
-        return symbols
+#     def getSymbols():
+#         return symbols
 
-    def setSizeOfBoard(size):
-        sizeOfBoard = size
+#     def setSizeOfBoard(size):
+#         sizeOfBoard = size
 
-    def getSizeOfBoard():
-        return sizeOfBoard
+#     def getSizeOfBoard():
+#         return sizeOfBoard
 
-    validInputs = ['y', 'yes', 'Y' 'Yes', 'YES', 'ok', 'Ok', 'OK', 'o']
+#     validInputs = ['y', 'yes', 'Y' 'Yes', 'YES', 'ok', 'Ok', 'OK', 'o']
 
-    ansiColours = {\
-            'black' : '\033[30m', \
-            'boldBlack' : '\033[30;1m', \
-            'red': '\033[31m', \
-            'boldRed': '\033[31;1m', \
-            'green': '\033[32m', \
-            'boldGreen': '\033[32;1m', \
-            'yellow' : '\033[33m', \
-            'boldYellow' : '\033[33;1m', \
-            'blue': '\033[34m', \
-            'boldBlue': '\033[34;1m', \
-            'magenta' : '\033[35m', \
-            'boldMagenta' : '\033[35;1m', \
-            'cyan' : '\033[36m', \
-            'boldCyan' : '\033[36;1m', \
-            'white' : '\033[37m', \
-            'boldWhite' : '\033[37;1m', \
-            'reset': '\033[0m' \
-            }
-    resetColour = ansiColours['reset']
-    boardColour = ansiColours['blue']
-    yLabelColour = ansiColours['boldWhite']
-    xLabelColour = ansiColours['boldWhite']
-    shipColour = ansiColours['yellow']
-    missColour = ansiColours['cyan']
-    hitColour  = ansiColours['boldRed']
-    sunkColour = ansiColours['red']
-    highlightColour = ansiColours['boldMagenta']
+#     ansiColours = {\
+#             'black' : '\033[30m', \
+#             'boldBlack' : '\033[30;1m', \
+#             'red': '\033[31m', \
+#             'boldRed': '\033[31;1m', \
+#             'green': '\033[32m', \
+#             'boldGreen': '\033[32;1m', \
+#             'yellow' : '\033[33m', \
+#             'boldYellow' : '\033[33;1m', \
+#             'blue': '\033[34m', \
+#             'boldBlue': '\033[34;1m', \
+#             'magenta' : '\033[35m', \
+#             'boldMagenta' : '\033[35;1m', \
+#             'cyan' : '\033[36m', \
+#             'boldCyan' : '\033[36;1m', \
+#             'white' : '\033[37m', \
+#             'boldWhite' : '\033[37;1m', \
+#             'reset': '\033[0m' \
+#             }
+#     resetColour = ansiColours['reset']
+#     boardColour = ansiColours['blue']
+#     yLabelColour = ansiColours['boldWhite']
+#     xLabelColour = ansiColours['boldWhite']
+#     shipColour = ansiColours['yellow']
+#     missColour = ansiColours['cyan']
+#     hitColour  = ansiColours['boldRed']
+#     sunkColour = ansiColours['red']
+#     highlightColour = ansiColours['boldMagenta']
 
 # instantiate the game object to avoid warnings in methods that variable has not been declared.
 # not strictly necessary as game object is in scope when called by the helper methods.
 # this just seems good practice.
-game = None
+# game = None
 
 def printBoard(board, latestShot=False):
     # TODO aloow printing of boards side by side
@@ -108,7 +109,7 @@ def printBoard(board, latestShot=False):
     string += References.xLabelColour + '    0   1   2   3   4   5   6   7   8   9' + References.resetColour
     print(string)
 
-def printWinner(state):
+def printWinner(state, game):
     clear()
     if state == 'lose':
         print('\nYou Lose\n\n')
@@ -270,7 +271,7 @@ def humanVcomp():
             if playerFirst != 0:
                 result, location = takeShotAt(game, "P2", "P1")
                 if result == 'P':
-                    printWinner('lose')
+                    printWinner('lose', game)
                     break
                 # when a ship is sunk, all squares from that ship are returned, not in hit order
                 # TODO could rewrite so that only the last shot taken is reported and a sunk message given.
@@ -292,7 +293,7 @@ def humanVcomp():
                 print()
             result = takeShotAt(game, 'P1', 'P2')
             if result == 'P1':
-                printWinner('win')
+                printWinner('win', game)
                 break
             playerFirst = 1
         humanVcomp=False

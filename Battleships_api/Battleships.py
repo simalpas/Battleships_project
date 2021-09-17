@@ -1,4 +1,4 @@
-from Player import Player
+from .Player import Player
 
 class Battleships:
     '''
@@ -7,6 +7,9 @@ class Battleships:
     '''
 
     def __init__(self, p1auto=False, p2auto=True, test=False, aiLevelP1=0, aiLevelP2=0, boardSize=10):
+        """
+        TODO document
+        """
         # Setup new players
         self.player1 = Player(auto=p1auto, test=test, aiLevel=aiLevelP1, boardSize=boardSize)
         self.player2 = Player(auto=p2auto, test=test, aiLevel=aiLevelP2, boardSize=boardSize)
@@ -29,31 +32,52 @@ class Battleships:
         return result
 
     def setFleetLocation(self, activePlayer, shipLocations, randomise=False):
+        """
+        TODO document
+        """
         return self.__getPlayer(activePlayer).setFleetLocation(shipLocations, randomise)
 
     def getPlayerBoard(self, player, tracking=False):
+        """
+        TODO document
+        """
         if tracking:
             return self.__getPlayer(player).getTracking()
         else:
             return self.__getPlayer(player).getBoard()
 
     def getAutoPlayer(self, player):
+        """
+        TODO document
+        """
         player = self.__getPlayer(player)
         return player.getAutoPlayer()
 
     def getLatestShot(self, player):
+        """
+        TODO document
+        """
         return self.__getPlayer(player).getLatestShot()
         
     def __getPlayer(self, player):
+        """
+        TODO document
+        """
         if player == "P1":
             return self.player1
         elif player == "P2":
             return self.player2
 
     def getMovesMade(self, player):
+        """
+        TODO document
+        """
         return self.__getPlayer(player).getMoveMade()
 
     def getWinner(self):
+        """
+        TODO document
+        """
         if self.__getPlayer('P2').fleetSize['shipsRemaining'] == 0:
             return 'P1'
         elif self.__getPlayer('P1').fleetSize['shipsRemaining'] == 0:

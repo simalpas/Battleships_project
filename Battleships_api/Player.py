@@ -1,6 +1,6 @@
-from GameBoard import GameBoard
-from Ai import Ai
-import References
+from .GameBoard import GameBoard
+from .Ai import Ai
+from . import References
 import time
 import random
 
