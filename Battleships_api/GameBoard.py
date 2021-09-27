@@ -17,7 +17,7 @@ class GameBoard:
         self.board[y][x] = symbol
 
     def __copyBoard(self, board):
-        '''Creates a copy of the board element by element, to avoid further dependancies'''
+        '''Creates a copy of the board element by element, to avoid further dependancies and maintain encapsulation'''
         copyBoard = []
         for i in self.board:
             row = []
@@ -35,9 +35,6 @@ class GameBoard:
                 row.append(' ')
             board.append(row)
         return board
-
-    def sumUp(self, a, b):
-        return a+b
     
     def __str__(self):
         yLabel = 9
