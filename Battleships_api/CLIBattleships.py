@@ -274,11 +274,10 @@ def humanVcomp():
                     printWinner('lose', game)
                     break
                 # when a ship is sunk, all squares from that ship are returned, not in hit order
-                # TODO could rewrite so that only the last shot taken is reported and a sunk message given.
                 if result in References.ships: # ship name only returned on sink event
                     print(f"\nComputer fired at {game.getLatestShot('P2')} and sunk your {result}\n")
                 else:
-                    print('\nComputer fired at {loc} and it was a {res}\n'.format(loc=location, res=result))
+                    print('\nComputer fired at {loc} and it was a {res}\n'.format(loc=location[0], res=result))
             else:
                 print('\n\n')
             print("Player 1 fleet")

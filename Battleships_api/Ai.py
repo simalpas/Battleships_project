@@ -135,6 +135,7 @@ class Ai():
         return potentialShots
 
     def __sanitiseList(self, guesses):
+        # removes duplicates from guesses
         potentialShots = []
         for eachTuple in guesses:
             if eachTuple in self.possibleShots:

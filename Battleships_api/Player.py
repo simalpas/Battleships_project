@@ -53,6 +53,8 @@ class Player:
     def getTracking(self):
         return self.boardTracking.getBoard()
 
+#TODO return list of tuples rather than just tuple
+
     def incoming(self, x, y):
         squareContents = self.boardPrimary.getSquare(x, y)
         # reverse lookup of symbol to shipname from dictionary
@@ -60,17 +62,21 @@ class Player:
         # does not make clear what has been hit until ship has been destroyed
         if squareContents == ' ':
             self.boardPrimary.setSquare(x, y, References.getSymbols()['Miss'])
-            return 'Miss', (x, y)
+            # return a list of tuples
+            return 'Miss', [(x, y)]
         elif squareContents != ' ' and self.fleetSize[squareContents] == 1:
              self.fleetSize[squareContents] -= 1
              self.fleetSize['shipsRemaining'] -= 1
-             self.boardPrimary.setSquare(x, y, References.getSymbols()['Sunk'])
+            #  next line may not be necessary as __sinkShip should change all entries in the board.
+            # edit, doesn't seem to be necessary.
+            #  self.boardPrimary.setSquare(x, y, References.getSymbols()['Sunk'])
              self.__sinkShip(self.fleetLocation[shipName], self.boardPrimary)
              return shipName, self.fleetLocation[shipName] #currently needed for Ai to sink ships
         elif squareContents != ' ':
             self.fleetSize[squareContents] -= 1
             self.boardPrimary.setSquare(x, y, References.getSymbols()['Hit'])
-            return 'Hit', (x, y)
+            # return a list of tuples
+            return 'Hit', [(x, y)]
 
     def takeShot(self, target, xCoord=False, yCoord=False):
         if self.autoPlayer:
@@ -90,7 +96,7 @@ class Player:
         if self.autoPlayer:
             self.aIPlayer.recordShot(result, x, y)
         elif result[0] in References.getShips():
-            self.__sinkShip(result[1], self.boardTracking)
+             self.__sinkShip(result[1], self.boardTracking)
         else:
             self.boardTracking.setSquare(x, y, References.symbols[result[0]])
 
