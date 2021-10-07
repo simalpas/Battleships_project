@@ -175,7 +175,7 @@ def setBoard(gameInstance, player):
                     # could check the placement in cli, but to avoid repeating myself, using functions in backend.
                     placed =  gameInstance.setFleetLocation(player, [[eachShip, (xCoord, yCoord), direction]])
                     if not placed:
-                        print("Sorry, you can't place it there cli")
+                        print("Sorry, you can't place it there 'cli")
                         time.sleep(References.displayDelay)
                 index += 1
                 result = True
@@ -183,21 +183,21 @@ def setBoard(gameInstance, player):
         result = False
     return result
 
-def checkPlacement(shipName, xCoord, yCoord, direction):
-    #iterate through list checking that ships stay inside grid, and don't start at the same place.
-    # TODO check for overlap (may involve passing all coords of ships to placeship)
-    if (xCoord+References.getShips()[shipName] > 10 and direction == 0)\
-        or (yCoord+References.getShips()[shipName] > 10 and direction == 1):
-        print('nope to check cli')
-        return False
-    """for i in range(References.getShips()[shipName]):
-        if [yCoord][xCoord] != ' ':
-            return False
-        if direction == 0:
-            xCoord += 1
-        elif direction == 1:
-            yCoord += 1"""
-    return True
+# def checkPlacement(shipName, xCoord, yCoord, direction):
+#     #iterate through list checking that ships stay inside grid, and don't start at the same place.
+#     # TODO check for overlap (may involve passing all coords of ships to placeship)
+#     if (xCoord+References.getShips()[shipName] > 10 and direction == 0)\
+#         or (yCoord+References.getShips()[shipName] > 10 and direction == 1):
+#         print('nope to check cli')
+#         return False
+#     """for i in range(References.getShips()[shipName]):
+#         if [yCoord][xCoord] != ' ':
+#             return False
+#         if direction == 0:
+#             xCoord += 1
+#         elif direction == 1:
+#             yCoord += 1"""
+#     return True
 
 
 def takeShotAt(gameInstance, activePlayer, target):

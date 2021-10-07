@@ -49,6 +49,7 @@ class Ai():
         return self.possibleShots.pop()
 
     def __randomWithShipTracking(self):
+        # messy logic, hard to follow
         potentialShot = self.__shipTrackingAlgorithm()
         if potentialShot != False:
             self.possibleShots.pop(self.possibleShots.index(potentialShot))
@@ -121,7 +122,7 @@ class Ai():
         x = knownHit[0]
         y = knownHit[1]
         # generate possible shots orthagonally adjacent taking into account direction
-        # direction == False : all orthagonally adjacent
+        # direction == all : all orthagonally adjacent
         # direction == 0 : horizontal
         # direction == 1 : vertical
         if direction == 0 or direction == 'all':
@@ -135,7 +136,7 @@ class Ai():
         return potentialShots
 
     def __sanitiseList(self, guesses):
-        # removes duplicates from guesses
+        # doesnt remove duplicates from guesses, but dupes means more likely to be a hit
         potentialShots = []
         for eachTuple in guesses:
             if eachTuple in self.possibleShots:

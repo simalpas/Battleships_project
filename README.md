@@ -16,18 +16,8 @@ This is the list of things that I think will end up with a reasonable working ve
 
 - Documentation for the API!!
 - Unittests
-- Separate the various classes into separate files and import them correctly so as to not need to refactor the methods.
-- Refactor the Battleships system class to respond to the various messages that the front end will need to call.| `JJJ
-- Ensure that any calls to return objects does not return the actual object but a copy of it to preserve encapsulation.
-- Write a new front end to play the game - done with cliBattleships.py
-- Add colors to front end, using references from the relevent class, could write colour changing methods to References?
-- Move functions to print the board, out of ship placement and into front end.
-- End reliance on toString method in GameBoard as this is a display component, not model.
 - Have ship placement done on an individual basis so that front end can control display of the board.
 - Refactor winner method so that take shot returns simpler results. Winner should only return the winner not moves made as well.
-- Refactor ships placement in Player.py so that placements are done via arguments passed from the controller.
-- Allow human player to auto place ships
-- Add a method to get the last shot taken by a player
 - Highlight last incoming shot when displaying player board in cli
 - Implement unit tests for public methods
 - Build a web front end

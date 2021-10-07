@@ -118,6 +118,8 @@ class Player:
         self.fleetSize['shipsRemaining'] += 1
 
     def __checkPlacement(self, grid, xCoord, yCoord, direction, shipName):
+        # guard is 10 as first square set is x coord ie 5+5=10, ship would be 
+        # placed at 5,6,7,8,9 (5 locations)
         if (xCoord+References.getShips()[shipName] > 10 and direction == 0)\
             or (yCoord+References.getShips()[shipName] > 10 and direction == 1):
             return False
@@ -144,6 +146,7 @@ class Player:
         Assuming valid inputs, locations will be written to Player location dictionary, and
         a GameBoard instantiated. """
         # TODO employ defensive programming to protect from cheating
+        # TODO check each ship type is only placed once
         if self.fleetSize['shipsRemaining'] == 5:
             return False
         elif self.autoPlayer or randomise:
@@ -155,11 +158,13 @@ class Player:
             for eachShip in shipLocations:
                 shipName, coords, direction = eachShip
                 x,y = coords
+                # odd guard to allow debugging message
+                # probably better to use the debugger properly!
                 if not self.__placeShip(self.boardPrimary, x, y, direction, shipName):
                     #print('invalid placement in Player.setFleetLocation()')
                     return False
             return True
-        pass
+        # pass
 
     def __randomPlacement(self, board):
         #print('randomPlacement')
