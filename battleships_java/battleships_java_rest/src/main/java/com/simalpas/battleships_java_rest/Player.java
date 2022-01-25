@@ -17,7 +17,7 @@ public class Player
     private final Map<String, Integer> fleetSize;
     // the coordinates of the placed ships
     private final Map<String, List<Coord>> fleetLocation;
-    // shotsTaken could not be used, instead the gameboard chould be checked
+    // shotsTaken could not be used, instead the gameboard could be checked
     // to see if there has been a shot taken at that location. However whilst
     // this is slightly less memory efficient, it is simpler and a little faster
     private List<Coord> shotsTaken;
@@ -58,6 +58,8 @@ public class Player
         if (auto)
         {
             this.aiBrain = new Ai(aiLevel, this.boardPrimary);
+//          Automatically setup any computer player boards
+            this.setFleetLocation();
         }
     }
 

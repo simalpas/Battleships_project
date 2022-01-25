@@ -5,7 +5,7 @@
     <property name="sun.boot.library.path" value="C:\Program Files\Eclipse Foundation\jdk-8.0.302.8-hotspot\jre\bin"/>
     <property name="java.vm.version" value="25.302-b08"/>
     <property name="java.vm.vendor" value="Temurin"/>
-    <property name="maven.multiModuleProjectDirectory" value="C:\dev\battleships_java\battleships_java_rest"/>
+    <property name="maven.multiModuleProjectDirectory" value="C:\dev\Battleships_project\battleships_java\battleships_java_rest"/>
     <property name="java.vendor.url" value="https://adoptium.net/"/>
     <property name="path.separator" value=";"/>
     <property name="guice.disable.misplaced.annotation.check" value="true"/>
@@ -16,7 +16,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.os.patch.level" value=""/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
-    <property name="user.dir" value="C:\dev\battleships_java\battleships_java_rest"/>
+    <property name="user.dir" value="C:\dev\Battleships_project\battleships_java\battleships_java_rest"/>
     <property name="java.runtime.version" value="1.8.0_302-b08"/>
     <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
     <property name="java.endorsed.dirs" value="C:\Program Files\Eclipse Foundation\jdk-8.0.302.8-hotspot\jre\lib\endorsed"/>
@@ -30,7 +30,7 @@
     <property name="maven.ext.class.path" value="C:\Program Files\NetBeans-12.2\netbeans\java\maven-nblib\netbeans-eventspy.jar"/>
     <property name="classworlds.conf" value="C:\Program Files\NetBeans-12.2\netbeans\java\maven\bin\..\bin\m2.conf"/>
     <property name="sun.jnu.encoding" value="Cp1252"/>
-    <property name="java.library.path" value="C:\Program Files\Eclipse Foundation\jdk-8.0.302.8-hotspot\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:\Program Files\Python39\Scripts\;C:\Program Files\Python39\;C:\Program Files\Eclipse Foundation\jdk-8.0.302.8-hotspot\bin;C:\Program Files\AdoptOpenJDK\jdk-11.0.11.9-hotspot\bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\Git\cmd;C:\Program Files (x86)\Gpg4win\..\GnuPG\bin;C:\ProgramData\chocolatey\bin;C:\dev\nodejs\;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Users\simal\AppData\Local\Microsoft\WindowsApps;C:\Users\simal\AppData\Local\GitHubDesktop\bin;C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2020.3.2\bin;C:\Java\OracleJDK_8\bin;C:\src\flutter\bin;C:\Users\simal\AppData\Local\atom\bin;C:\tools\neovim\Neovim\bin;C:\msys64\mingw64\bin;C:\Users\simal\AppData\Roaming\npm;."/>
+    <property name="java.library.path" value="C:\Program Files\Eclipse Foundation\jdk-8.0.302.8-hotspot\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:\Python310\Scripts\;C:\Python310\;C:\Program Files\Python39\Scripts\;C:\Program Files\Python39\;C:\Program Files\Eclipse Foundation\jdk-8.0.302.8-hotspot\bin;C:\Program Files\AdoptOpenJDK\jdk-11.0.11.9-hotspot\bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\Git\cmd;C:\Program Files (x86)\Gpg4win\..\GnuPG\bin;C:\ProgramData\chocolatey\bin;C:\dev\ProgramFiles\nodejs\;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Users\simal\AppData\Local\Microsoft\WindowsApps;C:\Users\simal\AppData\Local\GitHubDesktop\bin;C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2020.3.2\bin;C:\Java\OracleJDK_8\bin;C:\src\flutter\bin;C:\Users\simal\AppData\Local\atom\bin;C:\tools\neovim\Neovim\bin;C:\msys64\mingw64\bin;C:\Users\simal\AppData\Roaming\npm;C:\Program Files\MongoDB\Server\5.0\bin;;."/>
     <property name="maven.conf" value="C:\Program Files\NetBeans-12.2\netbeans\java\maven\bin\../conf"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.class.version" value="52.0"/>
@@ -47,7 +47,7 @@
     <property name="java.vm.specification.version" value="1.8"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="java.home" value="C:\Program Files\Eclipse Foundation\jdk-8.0.302.8-hotspot\jre"/>
-    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -Dmaven.ext.class.path=C:\Program Files\NetBeans-12.2\netbeans\java\maven-nblib\netbeans-eventspy.jar -Dfile.encoding=UTF-8 clean install"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -Dmaven.ext.class.path=C:\Program Files\NetBeans-12.2\netbeans\java\maven-nblib\netbeans-eventspy.jar -Dfile.encoding=UTF-8 test"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
     <property name="user.language" value="en"/>
     <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
@@ -64,7 +64,7 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="com.simalpas.battleships_java_rest.GameBoardTest" name="testGetSquare1" time="0.001"/>
+  <testcase classname="com.simalpas.battleships_java_rest.GameBoardTest" name="testGetSquare1" time="0"/>
   <testcase classname="com.simalpas.battleships_java_rest.GameBoardTest" name="testGetSquare2" time="0"/>
   <testcase classname="com.simalpas.battleships_java_rest.GameBoardTest" name="testGameBoard1" time="0"/>
   <testcase classname="com.simalpas.battleships_java_rest.GameBoardTest" name="testGameBoard2" time="0"/>
@@ -72,6 +72,6 @@
   <testcase classname="com.simalpas.battleships_java_rest.GameBoardTest" name="testSetSquare2" time="0"/>
   <testcase classname="com.simalpas.battleships_java_rest.GameBoardTest" name="testSetSquare3" time="0"/>
   <testcase classname="com.simalpas.battleships_java_rest.GameBoardTest" name="testprintBoard1" time="0"/>
-  <testcase classname="com.simalpas.battleships_java_rest.GameBoardTest" name="testprintBoard2" time="0"/>
+  <testcase classname="com.simalpas.battleships_java_rest.GameBoardTest" name="testprintBoard2" time="0.001"/>
   <testcase classname="com.simalpas.battleships_java_rest.GameBoardTest" name="testprintBoard3" time="0"/>
 </testsuite>

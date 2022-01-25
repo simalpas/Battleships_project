@@ -97,7 +97,7 @@ public class ResultTest
         coords.add(a);
         coords.add(b);
         Result r = new Result("anEntry", coords);
-        String expResult = "resultName = anEntry -> (0,1), (1,2), ";
+        String expResult = "resultName = anEntry -> (0, 1), (1, 2), ";
         System.out.println(r.toString());
         assertEquals("to string not correct", r.toString(), expResult);
     }

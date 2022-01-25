@@ -17,8 +17,8 @@ public class BattleshipsMain
     /**
      * Main class for the game.
      *
-     * @param p1auto computer player or not
-     * @param p2auto computer player or not
+     * @param p1auto computer player or not (true/false)
+     * @param p2auto computer player or not (true/false)
      * @param p1AiLevel 0=random, 1=tracking
      * @param p2AiLevel 0=random, 1=tracking
      * @param boardSize 5 - 99. best with 10
@@ -36,6 +36,15 @@ public class BattleshipsMain
     }
 
     /**
+     * Zero arg constructor for comp vs comp with auto setup.
+     */
+    public BattleshipsMain()
+    {
+        this.p1 = new Player(true, 1, 10);
+        this.p2 = new Player(true, 1, 10);
+    }
+
+    /**
      * for computer players
      *
      * @param activePlayer
@@ -43,7 +52,7 @@ public class BattleshipsMain
      * @return
      */
     public Map<String, List<Integer[]>> takeShot(
-            String activePlayer, 
+            String activePlayer,
             String target)
     {
         Player activeActual = this.getPlayer(activePlayer);
@@ -62,14 +71,14 @@ public class BattleshipsMain
      * @return if invalid coords, Map will have a single key "invalid"
      */
     public Map<String, List<Integer[]>> takeShot(
-            String activePlayer, 
-            String target, 
-            int x, 
+            String activePlayer,
+            String target,
+            int x,
             int y)
     {
         Player activeActual = this.getPlayer(activePlayer);
         Player targetActual = this.getPlayer(target);
-        Coord shootAt = new Coord(x,y);
+        Coord shootAt = new Coord(x, y);
         Result result = activeActual.takeShot(targetActual, shootAt);
         return result.unpack();
     }
@@ -100,24 +109,24 @@ public class BattleshipsMain
     }
 
     /**
-     * 
+     *
      * @param player
      * @param tracking
-     * @return 
+     * @return
      */
     public char[][] getPlayerBoard(String player, boolean tracking)
     {
-        if(tracking)
+        if (tracking)
         {
             return this.getPlayer(player).getBoardTracking();
         }
         return this.getPlayer(player).getBoardPrimary();
     }
-    
+
     /**
-     * 
+     *
      * @param player
-     * @return 
+     * @return
      */
     public boolean getAutoPlayer(String player)
     {
@@ -125,30 +134,33 @@ public class BattleshipsMain
     }
 
     /**
-     * 
+     *
      * @param player
-     * @return 
+     * @return
      */
     public int[] getLatestShot(String player)
     {
         Coord latest = this.getPlayer(player).getLatestShot();
-        int[] result = {latest.getX(), latest.getY()};
+        int[] result =
+        {
+            latest.getX(), latest.getY()
+        };
         return result;
     }
-    
+
     /**
-     * 
+     *
      * @param player
-     * @return 
+     * @return
      */
     public int getMovesMade(String player)
     {
         return this.getPlayer(player).getMovesMade();
     }
-    
+
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public String getWinner()
     {
@@ -161,10 +173,11 @@ public class BattleshipsMain
         }
         return "";
     }
+
     /**
-     * 
+     *
      * @param player
-     * @return 
+     * @return
      */
     private Player getPlayer(String player)
     {
